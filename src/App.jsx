@@ -39,7 +39,13 @@ function App() {
           const fetchedTasks = validRows.map((row, index) => {
             const estimate = parseFloat(row['Estimate Point']) || 0;
             const done = parseFloat(row['Done Point']) || 0;
-            const progress = estimate > 0 ? Math.round((done / estimate) * 100) : 0;
+            let progress = estimate > 0 ? Math.round((done / estimate) * 100) : 0;
+            
+            const status = row['Status'] || '🚦 Chưa bắt đầu';
+            if (status.toLowerCase().includes('hoàn thành') || status.toLowerCase().includes('done')) {
+              progress = 100;
+            }
+
             return {
               id: `T-${index + 1}`,
               name: row['Objective/KR'] || 'Untitled',
@@ -158,7 +164,16 @@ function App() {
 
   const handleUpdateTaskStatus = async (taskName, newStatus) => {
     // Optimistic UI Update
-    setTasks(prev => prev.map(t => t.name === taskName ? { ...t, status: newStatus } : t));
+    setTasks(prev => prev.map(t => {
+      if (t.name === taskName) {
+        let newProgress = t.progress;
+        if (newStatus.toLowerCase().includes('hoàn thành') || newStatus.toLowerCase().includes('done')) {
+          newProgress = 100;
+        }
+        return { ...t, status: newStatus, progress: newProgress };
+      }
+      return t;
+    }));
     
     try {
       await sendPostRequest({ action: 'updateTaskStatus', taskName, newStatus });
