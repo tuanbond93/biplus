@@ -241,7 +241,7 @@ function App() {
           {activeTab === 'dashboard' && <Dashboard tasks={tasks} />}
           {activeTab === 'kanban' && <KanbanBoard tasks={tasks} />}
           {activeTab === 'eisenhower' && <EisenhowerMatrix tasks={tasks} />}
-          {activeTab === 'tasks' && <TaskTable tasks={tasks} onOpenModal={() => setIsModalOpen(true)} />}
+          {activeTab === 'tasks' && <TaskTable tasks={tasks} />}
         </div>
       </main>
     </div>

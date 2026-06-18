@@ -1,7 +1,7 @@
 import React from 'react';
 import { getStatusColor, getPriorityColor } from '../helpers';
 
-export default function TaskTable({ tasks, onOpenModal }) {
+export default function TaskTable({ tasks }) {
   const getStatusBadge = (status) => {
     const color = getStatusColor(status);
     return (
@@ -38,7 +38,6 @@ export default function TaskTable({ tasks, onOpenModal }) {
     <div className="glass-panel" style={{ padding: '1.5rem', marginTop: '2rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-main)', margin: 0, fontFamily: 'var(--font-accent)' }}>Danh sách công việc (All Tasks)</h3>
-        <button className="btn btn-primary" onClick={onOpenModal}>Add Task</button>
       </div>
 
       <div className="table-container">
