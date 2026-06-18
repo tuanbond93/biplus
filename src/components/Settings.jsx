@@ -69,7 +69,7 @@ export default function Settings({ settings, onSaveSettings, isSaving }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '300px', overflowY: 'auto' }}>
             {users.length === 0 && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>Chưa có dữ liệu</p>}
             {users.map(u => (
-              <div key={u} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+              <div key={u} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', background: 'var(--bg-color)', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
                 <span style={{ fontWeight: 500, fontSize: '0.9rem' }}>{u}</span>
                 <button onClick={() => handleDeleteUser(u)} style={{ background: 'transparent', border: 'none', color: 'var(--danger)', cursor: 'pointer' }}><Trash2 size={18} /></button>
               </div>
@@ -96,7 +96,7 @@ export default function Settings({ settings, onSaveSettings, isSaving }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '300px', overflowY: 'auto' }}>
             {projects.length === 0 && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textAlign: 'center' }}>Chưa có dữ liệu</p>}
             {projects.map(p => (
-              <div key={p} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+              <div key={p} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', background: 'var(--bg-color)', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
                 <span style={{ fontWeight: 500, fontSize: '0.9rem' }}>{p}</span>
                 <button onClick={() => handleDeleteProject(p)} style={{ background: 'transparent', border: 'none', color: 'var(--danger)', cursor: 'pointer' }}><Trash2 size={18} /></button>
               </div>

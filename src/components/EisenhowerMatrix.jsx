@@ -45,7 +45,7 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
           <span style={{ background: 'var(--bg-color)', padding: '0.1rem 0.5rem', borderRadius: '99px', fontSize: '0.8rem', color: 'var(--text-main)' }}>{list.length}</span>
         </h3>
       </div>
-      <div style={{ padding: '1rem', flex: 1, overflowY: 'auto', maxHeight: '400px', display: 'flex', flexDirection: 'column', gap: '0.75rem', background: '#f8fafc' }}>
+      <div style={{ padding: '1rem', flex: 1, overflowY: 'auto', maxHeight: '400px', display: 'flex', flexDirection: 'column', gap: '0.75rem', background: 'var(--bg-color)' }}>
         {list.length === 0 ? (
           <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '2rem' }}>Không có công việc nào</div>
         ) : (
@@ -54,7 +54,7 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
               key={task.id} 
               onClick={() => handleTaskClick(task)}
               style={{ 
-                background: selectedTask?.id === task.id ? 'var(--primary-light)' : 'var(--card-bg)', 
+                background: selectedTask?.id === task.id ? color + '15' : 'var(--card-bg)', 
                 padding: '1rem', 
                 borderRadius: '8px', 
                 border: selectedTask?.id === task.id ? `2px solid ${color}` : '1px solid var(--card-border)', 

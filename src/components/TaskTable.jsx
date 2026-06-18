@@ -71,7 +71,7 @@ export default function TaskTable({ tasks, onDeleteTask, onEditTask }) {
                 key={task.id} 
                 style={{ borderBottom: '1px solid var(--card-border)', cursor: 'pointer', transition: 'background 0.2s' }}
                 onClick={() => onEditTask(task)}
-                onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-color)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
               >
                 <td style={{ padding: '1rem 1.5rem' }}>

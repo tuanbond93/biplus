@@ -209,11 +209,11 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
                         style={{ 
                           borderBottom: '1px solid var(--card-border)', 
                           cursor: 'pointer',
-                          background: selectedTask?.id === task.id ? 'var(--primary-light)' : 'var(--card-bg)',
+                          background: selectedTask?.id === task.id ? color + '15' : 'var(--card-bg)',
                           transition: 'background 0.2s'
                         }}
-                        onMouseEnter={e => e.currentTarget.style.background = selectedTask?.id === task.id ? 'var(--primary-light)' : 'var(--bg-color)'}
-                        onMouseLeave={e => e.currentTarget.style.background = selectedTask?.id === task.id ? 'var(--primary-light)' : 'var(--card-bg)'}
+                        onMouseEnter={e => e.currentTarget.style.background = selectedTask?.id === task.id ? color + '15' : 'var(--bg-color)'}
+                        onMouseLeave={e => e.currentTarget.style.background = selectedTask?.id === task.id ? color + '15' : 'var(--card-bg)'}
                       >
                         <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--card-border)', color: 'var(--text-muted)' }}>{idx + 1}</td>
                         <td style={{ padding: '0.5rem', borderRight: '1px solid var(--card-border)', color: 'var(--text-main)', fontWeight: 600 }}>{task.name}</td>

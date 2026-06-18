@@ -135,7 +135,7 @@ const MultiSelectDropdown = ({ options = [], value = '', onChange, placeholder }
       >
         {selectedItems.map((item, idx) => (
           <span key={idx} style={{
-            background: 'var(--primary-light)', color: 'var(--text-main)', 
+            background: 'var(--card-bg)', color: 'var(--text-main)', 
             padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem',
             display: 'flex', alignItems: 'center', gap: '0.2rem'
           }}>
@@ -180,11 +180,11 @@ const MultiSelectDropdown = ({ options = [], value = '', onChange, placeholder }
                 borderBottom: idx < filteredOptions.length - 1 ? '1px solid #f1f5f9' : 'none',
                 color: selectedItems.includes(opt) ? 'var(--primary)' : 'var(--text-main)',
                 fontWeight: selectedItems.includes(opt) ? 600 : 400,
-                background: selectedItems.includes(opt) ? '#f8fafc' : 'transparent',
+                background: selectedItems.includes(opt) ? 'var(--bg-color)' : 'transparent',
                 display: 'flex', justifyContent: 'space-between'
               }}
-              onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
-              onMouseLeave={e => e.currentTarget.style.background = selectedItems.includes(opt) ? '#f8fafc' : 'transparent'}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-color)'}
+              onMouseLeave={e => e.currentTarget.style.background = selectedItems.includes(opt) ? 'var(--bg-color)' : 'transparent'}
             >
               <span>{opt}</span>
               {selectedItems.includes(opt) && <span style={{ color: 'var(--primary)' }}>✓</span>}
