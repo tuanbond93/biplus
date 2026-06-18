@@ -72,9 +72,9 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
   };
 
   return (
-    <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
+    <div className="kanban-layout">
       {/* LEFT SIDEBAR (Filter, Updater, Notes) */}
-      <div style={{ width: '260px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '1.5rem', background: '#f8fafc', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--card-border)' }}>
+      <div className="kanban-sidebar">
         
         {/* FILTER BY */}
         <div style={{ background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
@@ -178,7 +178,7 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
       </div>
 
       {/* RIGHT BOARD (Kanban Columns) */}
-      <div style={{ flex: 1, display: 'flex', gap: '1.5rem', overflowX: 'auto', paddingBottom: '1rem' }}>
+      <div className="kanban-board-container">
         {allStatuses.map(status => {
           const columnTasks = getTasksByStatus(status);
           const color = getStatusColor(status);

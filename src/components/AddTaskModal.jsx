@@ -87,7 +87,118 @@ const SearchableDropdown = ({ options = [], value, onChange, placeholder }) => {
   );
 };
 
-export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, settings }) {
+const MultiSelectDropdown = ({ options = [], value = '', onChange, placeholder }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const wrapperRef = useRef(null);
+
+  const selectedItems = value ? value.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [wrapperRef]);
+
+  const filteredOptions = options.filter(opt => opt.toLowerCase().includes(search.toLowerCase()));
+
+  const toggleItem = (item) => {
+    let newItems;
+    if (selectedItems.includes(item)) {
+      newItems = selectedItems.filter(i => i !== item);
+    } else {
+      newItems = [...selectedItems, item];
+    }
+    onChange(newItems.join(', '));
+  };
+
+  const removeItem = (e, item) => {
+    e.stopPropagation();
+    const newItems = selectedItems.filter(i => i !== item);
+    onChange(newItems.join(', '));
+  };
+
+  return (
+    <div ref={wrapperRef} style={{ position: 'relative', width: '100%' }}>
+      <div 
+        onClick={() => setIsOpen(true)}
+        style={{ 
+          width: '100%', minHeight: '44px', padding: '0.4rem 2.5rem 0.4rem 0.4rem',
+          borderRadius: '10px', border: '1.5px solid var(--card-border)',
+          background: 'var(--bg-main)', cursor: 'text',
+          display: 'flex', flexWrap: 'wrap', gap: '0.4rem', alignItems: 'center'
+        }}
+      >
+        {selectedItems.map((item, idx) => (
+          <span key={idx} style={{
+            background: 'var(--primary-light)', color: 'var(--text-main)', 
+            padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem',
+            display: 'flex', alignItems: 'center', gap: '0.2rem'
+          }}>
+            {item}
+            <button type="button" onClick={(e) => removeItem(e, item)} style={{ background:'transparent', border:'none', cursor:'pointer', color:'var(--danger)', display:'flex', padding:0 }}><X size={12}/></button>
+          </span>
+        ))}
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={selectedItems.length === 0 ? placeholder : ''}
+          style={{ 
+            flex: 1, minWidth: '80px', border: 'none', background: 'transparent',
+            outline: 'none', color: 'var(--text-main)', fontSize: '0.95rem', padding: '0.2rem'
+          }}
+        />
+        <div 
+          onClick={(e) => { e.stopPropagation(); setIsOpen(!isOpen); }}
+          style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: 'var(--text-muted)' }}
+        >
+          <ChevronDown size={16} />
+        </div>
+      </div>
+      
+      {isOpen && (
+        <div style={{
+          position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px',
+          background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 10,
+          maxHeight: '200px', overflowY: 'auto'
+        }}>
+          {filteredOptions.length > 0 ? filteredOptions.map((opt, idx) => (
+            <div 
+              key={idx}
+              onClick={() => {
+                toggleItem(opt);
+                setSearch('');
+              }}
+              style={{
+                padding: '0.75rem 1rem', cursor: 'pointer', fontSize: '0.9rem',
+                borderBottom: idx < filteredOptions.length - 1 ? '1px solid #f1f5f9' : 'none',
+                color: selectedItems.includes(opt) ? 'var(--primary)' : 'var(--text-main)',
+                fontWeight: selectedItems.includes(opt) ? 600 : 400,
+                background: selectedItems.includes(opt) ? '#f8fafc' : 'transparent',
+                display: 'flex', justifyContent: 'space-between'
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+              onMouseLeave={e => e.currentTarget.style.background = selectedItems.includes(opt) ? '#f8fafc' : 'transparent'}
+            >
+              <span>{opt}</span>
+              {selectedItems.includes(opt) && <span style={{ color: 'var(--primary)' }}>✓</span>}
+            </div>
+          )) : (
+            <div style={{ padding: '0.75rem 1rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Không tìm thấy</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, settings, initialData }) {
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -96,6 +207,23 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
     status: '🚦 Chưa bắt đầu',
     dueDate: ''
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      if (initialData) {
+        setFormData(initialData);
+      } else {
+        setFormData({
+          name: '',
+          category: '',
+          assignee: '',
+          priority: '🧊 Thấp',
+          status: '🚦 Chưa bắt đầu',
+          dueDate: ''
+        });
+      }
+    }
+  }, [isOpen, initialData]);
 
   if (!isOpen) return null;
 
@@ -107,25 +235,37 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!settings?.projects?.includes(formData.category)) {
+    if (formData.category && !settings?.projects?.includes(formData.category)) {
       alert("⚠️ Dự án không hợp lệ! Vui lòng chỉ chọn (hoặc gõ đúng) Dự án có sẵn trong danh sách Setting.");
       return;
     }
-    if (formData.assignee && !settings?.users?.includes(formData.assignee)) {
-      alert("⚠️ Người phụ trách không hợp lệ! Vui lòng chỉ chọn (hoặc gõ đúng) tên có sẵn trong danh sách Setting.");
-      return;
+    
+    // For assignees, check if all selected ones are in settings
+    if (formData.assignee) {
+      const assignees = formData.assignee.split(',').map(s => s.trim()).filter(Boolean);
+      const invalid = assignees.find(a => !settings?.users?.includes(a));
+      if (invalid) {
+        alert(`⚠️ Người phụ trách "${invalid}" không hợp lệ! Vui lòng chọn trong danh sách Setting.`);
+        return;
+      }
     }
 
-    onSubmit(formData);
+    onSubmit(formData, initialData ? initialData.name : null);
   };
+
+  const isEditMode = !!initialData;
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--card-border)', paddingBottom: '1rem' }}>
           <div>
-            <h2 style={{ margin: 0, fontFamily: 'var(--font-accent)', fontSize: '1.25rem', color: 'var(--text-main)' }}>Tạo công việc mới</h2>
-            <p style={{ margin: 0, marginTop: '0.25rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>Vui lòng điền thông tin để thêm task vào Backlog</p>
+            <h2 style={{ margin: 0, fontFamily: 'var(--font-accent)', fontSize: '1.25rem', color: 'var(--text-main)' }}>
+              {isEditMode ? 'Cập nhật công việc' : 'Tạo công việc mới'}
+            </h2>
+            <p style={{ margin: 0, marginTop: '0.25rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+              {isEditMode ? 'Chỉnh sửa thông tin chi tiết của task' : 'Vui lòng điền thông tin để thêm task vào Backlog'}
+            </p>
           </div>
           <button onClick={onClose} style={{ background: 'var(--card-border)', border: 'none', cursor: 'pointer', color: 'var(--text-main)', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
             <X size={18} />
@@ -149,8 +289,8 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
               />
             </div>
             <div className="form-group">
-              <label>Người phụ trách</label>
-              <SearchableDropdown 
+              <label>Người phụ trách (Có thể chọn nhiều)</label>
+              <MultiSelectDropdown 
                 options={settings?.users || []}
                 value={formData.assignee}
                 onChange={(val) => setFormData({ ...formData, assignee: val })}
@@ -196,7 +336,7 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
             <button type="button" className="btn btn-ghost" onClick={onClose} disabled={isSubmitting} style={{ padding: '0.6rem 1.5rem' }}>Hủy bỏ</button>
             <button type="submit" className="btn btn-primary" disabled={isSubmitting} style={{ padding: '0.6rem 2rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               {isSubmitting && <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />}
-              {isSubmitting ? 'Đang lưu...' : 'Lưu Task'}
+              {isSubmitting ? 'Đang lưu...' : (isEditMode ? 'Cập nhật' : 'Lưu Task')}
             </button>
           </div>
         </form>
@@ -214,7 +354,7 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
         }
         .modal-content {
           background: var(--card-bg);
-          width: 90%; max-width: 550px;
+          width: 90%; max-width: 600px;
           border-radius: 16px;
           padding: 2rem;
           box-shadow: 0 20px 40px rgba(0,0,0,0.1);

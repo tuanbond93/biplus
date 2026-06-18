@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { getStatusColor, getPriorityColor } from '../helpers';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Search } from 'lucide-react';
 
-export default function TaskTable({ tasks, onDeleteTask }) {
+export default function TaskTable({ tasks, onDeleteTask, onEditTask }) {
+  const [searchQuery, setSearchQuery] = useState('');
+
   const getStatusBadge = (status) => {
     const color = getStatusColor(status);
     return (
@@ -23,10 +25,32 @@ export default function TaskTable({ tasks, onDeleteTask }) {
     );
   };
 
+  const filteredTasks = tasks.filter(t => {
+    if (!searchQuery) return true;
+    const lowerQ = searchQuery.toLowerCase();
+    return (t.name || '').toLowerCase().includes(lowerQ) || 
+           (t.category || '').toLowerCase().includes(lowerQ) ||
+           (t.assignee || '').toLowerCase().includes(lowerQ);
+  });
+
   return (
     <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
-      <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--card-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--card-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <h3 style={{ margin: 0, fontFamily: 'var(--font-accent)', fontSize: '1.1rem', color: 'var(--text-main)' }}>Task List</h3>
+        <div style={{ position: 'relative', width: '300px', maxWidth: '100%' }}>
+          <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <input 
+            type="text" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Tìm kiếm task, dự án, người phụ trách..." 
+            style={{ 
+              width: '100%', padding: '0.6rem 1rem 0.6rem 2.2rem', 
+              borderRadius: '8px', border: '1px solid var(--card-border)',
+              background: 'var(--bg-main)', color: 'var(--text-main)', outline: 'none'
+            }}
+          />
+        </div>
       </div>
       
       <div style={{ overflowX: 'auto' }}>
@@ -42,8 +66,14 @@ export default function TaskTable({ tasks, onDeleteTask }) {
             </tr>
           </thead>
           <tbody>
-            {tasks.map(task => (
-              <tr key={task.id} style={{ borderBottom: '1px solid var(--card-border)' }}>
+            {filteredTasks.map(task => (
+              <tr 
+                key={task.id} 
+                style={{ borderBottom: '1px solid var(--card-border)', cursor: 'pointer', transition: 'background 0.2s' }}
+                onClick={() => onEditTask(task)}
+                onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+              >
                 <td style={{ padding: '1rem 1.5rem' }}>
                   <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>{task.name}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Owner: {task.assignee || 'Unassigned'}</div>
@@ -56,9 +86,9 @@ export default function TaskTable({ tasks, onDeleteTask }) {
                   </span>
                 </td>
                 <td style={{ padding: '1rem 1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{task.dueDate}</td>
-                <td style={{ padding: '1rem 1.5rem', textAlign: 'center' }}>
+                <td style={{ padding: '1rem 1.5rem', textAlign: 'center' }} onClick={e => e.stopPropagation()}>
                   <button 
-                    onClick={() => onDeleteTask(task.name)} 
+                    onClick={(e) => { e.stopPropagation(); onDeleteTask(task.name); }} 
                     style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--danger)', padding: '0.5rem', borderRadius: '6px', transition: 'background 0.2s' }}
                     onMouseEnter={e => e.currentTarget.style.background = '#fee2e2'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
@@ -69,10 +99,10 @@ export default function TaskTable({ tasks, onDeleteTask }) {
                 </td>
               </tr>
             ))}
-            {tasks.length === 0 && (
+            {filteredTasks.length === 0 && (
               <tr>
                 <td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                  Không có công việc nào
+                  Không tìm thấy công việc nào
                 </td>
               </tr>
             )}

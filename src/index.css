@@ -211,6 +211,45 @@ tbody tr:hover {
 }
 
 /* Responsive Design */
+.kanban-layout {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.kanban-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+}
+
+.kanban-board-container {
+  flex: 1;
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.eisenhower-grid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.eisenhower-row {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+}
+
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
@@ -251,8 +290,28 @@ tbody tr:hover {
   
   .charts-grid > div > div {
     flex-direction: column !important;
-    height: auto !important;
     gap: 2rem !important;
+    min-height: 300px;
+  }
+  
+  .kanban-layout {
+    flex-direction: column;
+  }
+  
+  .kanban-sidebar {
+    width: 100%;
+  }
+  
+  .kanban-board-container {
+    flex-direction: column;
+  }
+  
+  .kanban-board-container > div {
+    flex: 1 1 100% !important;
+  }
+  
+  .eisenhower-row {
+    flex-direction: column;
   }
 }
 

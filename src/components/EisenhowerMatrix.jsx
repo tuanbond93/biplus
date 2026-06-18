@@ -76,9 +76,9 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
   );
 
   return (
-    <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
+    <div className="kanban-layout">
       {/* LEFT SIDEBAR (Filter, Updater, Notes) */}
-      <div style={{ width: '260px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '1.5rem', background: '#f8fafc', padding: '1.5rem', borderRadius: '12px', border: '1px solid var(--card-border)' }}>
+      <div className="kanban-sidebar">
         
         {/* FILTER BY */}
         <div style={{ background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
@@ -181,12 +181,12 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
       </div>
 
       {/* RIGHT BOARD (Matrix) */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        <div style={{ display: 'flex', gap: '1.5rem', flex: 1 }}>
+      <div className="eisenhower-grid">
+        <div className="eisenhower-row">
           {renderQuadrant('🚨 DO FIRST (Khẩn cấp)', doFirst, '#ef4444', '#fef2f2')}
           {renderQuadrant('🔥 SCHEDULE (Cao)', schedule, '#f97316', '#fff7ed')}
         </div>
-        <div style={{ display: 'flex', gap: '1.5rem', flex: 1 }}>
+        <div className="eisenhower-row">
           {renderQuadrant('⚡ DELEGATE (TB)', delegate, '#3b82f6', '#eff6ff')}
           {renderQuadrant('🧊 DONT DO (Thấp)', dontDo, '#94a3b8', '#f8fafc')}
         </div>

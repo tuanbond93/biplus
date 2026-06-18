@@ -19,6 +19,7 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editTaskData, setEditTaskData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSavingSettings, setIsSavingSettings] = useState(false);
 
@@ -110,32 +111,42 @@ function App() {
     });
   };
 
-  const handleAddTaskSubmit = async (formData) => {
+  const handleSaveTaskSubmit = async (formData, oldTaskName) => {
     setIsSubmitting(true);
     try {
-      // Thêm task vào giao diện ngay lập tức (Optimistic Update) vì file CSV của Google có thể mất 5 phút để cập nhật
-      const newTask = {
-        id: `T-Mới-${Date.now().toString().slice(-4)}`,
-        name: formData.name || 'Untitled',
-        category: formData.category || 'No Project',
-        assignee: formData.assignee || 'Unassigned',
-        priority: formData.priority || '🧊 Thấp',
-        status: formData.status || '🚦 Chưa bắt đầu',
-        dueDate: formData.dueDate || '-',
-        progress: 0
-      };
-      setTasks(prev => [...prev, newTask]);
-
-      await sendPostRequest({ action: 'addTask', ...formData });
+      if (oldTaskName) {
+        // Edit mode Optimistic Update
+        setTasks(prev => prev.map(t => t.name === oldTaskName ? { ...t, ...formData } : t));
+        await sendPostRequest({ action: 'editTask', oldTaskName, ...formData });
+      } else {
+        // Add mode Optimistic Update
+        const newTask = {
+          id: `T-Mới-${Date.now().toString().slice(-4)}`,
+          name: formData.name || 'Untitled',
+          category: formData.category || 'No Project',
+          assignee: formData.assignee || 'Unassigned',
+          priority: formData.priority || '🧊 Thấp',
+          status: formData.status || '🚦 Chưa bắt đầu',
+          dueDate: formData.dueDate || '-',
+          progress: 0
+        };
+        setTasks(prev => [...prev, newTask]);
+        await sendPostRequest({ action: 'addTask', ...formData });
+      }
       setTimeout(() => {
         setIsModalOpen(false);
         setIsSubmitting(false);
-        // fetchData(); // Tạm tắt fetchData ngay lập tức vì CSV bị delay 5 phút
+        setEditTaskData(null);
       }, 500);
     } catch (err) {
       console.error(err);
       setIsSubmitting(false);
     }
+  };
+
+  const handleEditTaskClick = (task) => {
+    setEditTaskData(task);
+    setIsModalOpen(true);
   };
 
   const handleAddNote = async (note) => {
@@ -217,10 +228,11 @@ function App() {
     <div className="app-container">
       <AddTaskModal 
         isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onSubmit={handleAddTaskSubmit}
+        onClose={() => { setIsModalOpen(false); setEditTaskData(null); }} 
+        onSubmit={handleSaveTaskSubmit}
         isSubmitting={isSubmitting}
         settings={settings}
+        initialData={editTaskData}
       />
 
       <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)}></div>
@@ -285,7 +297,7 @@ function App() {
           </div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>+ Add Task</button>
+            <button className="btn btn-primary" onClick={() => { setEditTaskData(null); setIsModalOpen(true); }}>+ Add Task</button>
             <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem 1rem', borderRadius: '999px', background: 'var(--card-bg)' }}>
               <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: 'var(--text-main)' }}>
                 T
@@ -299,7 +311,7 @@ function App() {
           {activeTab === 'dashboard' && <Dashboard tasks={tasks} />}
           {activeTab === 'kanban' && <KanbanBoard tasks={tasks} notes={notes} onAddNote={handleAddNote} onDeleteNote={handleDeleteNote} users={settings.users} onUpdateTaskStatus={handleUpdateTaskStatus} />}
           {activeTab === 'eisenhower' && <EisenhowerMatrix tasks={tasks} notes={notes} onAddNote={handleAddNote} onDeleteNote={handleDeleteNote} users={settings.users} onUpdateTaskStatus={handleUpdateTaskStatus} />}
-          {activeTab === 'tasks' && <TaskTable tasks={tasks} onDeleteTask={handleDeleteTask} />}
+          {activeTab === 'tasks' && <TaskTable tasks={tasks} onDeleteTask={handleDeleteTask} onEditTask={handleEditTaskClick} />}
           {activeTab === 'settings' && <Settings settings={settings} onSaveSettings={handleSaveSettings} isSaving={isSavingSettings} />}
         </div>
       </main>
