@@ -318,12 +318,6 @@ function App() {
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
             <button className="btn btn-primary" onClick={() => { setEditTaskData(null); setIsModalOpen(true); }}>+ Add Task</button>
-            <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem 1rem', borderRadius: '999px', background: 'var(--card-bg)' }}>
-              <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: 'var(--text-main)' }}>
-                T
-              </div>
-              <span style={{ fontWeight: 600, color: 'var(--text-main)', display: 'none', '@media (min-width: 768px)': { display: 'block' } }}>Thu Nguyen</span>
-            </div>
           </div>
         </header>
 

@@ -156,11 +156,11 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
           
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto', marginBottom: '1rem', maxHeight: '200px' }}>
             {notes.map(note => (
-              <div key={note.id} style={{ background: 'var(--card-bg)', padding: '0.5rem', borderRadius: '4px', fontSize: '0.8rem', borderLeft: '3px solid #facc15', position: 'relative' }}>
-                <p style={{ margin: '0 0 0.25rem 0', color: 'var(--text-main)' }}>{note.text}</p>
+              <div key={note.id} style={{ background: '#fef08a', padding: '0.5rem', borderRadius: '4px', fontSize: '0.8rem', borderLeft: '3px solid #facc15', position: 'relative' }}>
+                <p style={{ margin: '0 0 0.25rem 0', color: '#422006' }}>{note.text}</p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.65rem', color: 'var(--primary)', fontWeight: 600 }}>- {note.author}</span>
-                  <button onClick={() => onDeleteNote(note.id)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--danger)', padding: 0 }}><Trash2 size={12} /></button>
+                  <span style={{ fontSize: '0.65rem', color: '#854d0e', fontWeight: 600 }}>- {note.author}</span>
+                  <button onClick={() => onDeleteNote(note.id)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 0, color: '#ca8a04' }} title="Xóa note"><Trash2 size={12} /></button>
                 </div>
               </div>
             ))}
