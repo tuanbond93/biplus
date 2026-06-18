@@ -35,11 +35,14 @@ export default function Dashboard({ tasks }) {
   const ownerStatsMap = {};
   tasks.forEach(task => {
     if (!task.assignee) return;
-    if (!ownerStatsMap[task.assignee]) {
-      ownerStatsMap[task.assignee] = { name: task.assignee };
-      uniqueStatuses.forEach(s => ownerStatsMap[task.assignee][s] = 0);
-    }
-    ownerStatsMap[task.assignee][task.status] += 1;
+    const assignees = task.assignee.split(',').map(a => a.trim()).filter(Boolean);
+    assignees.forEach(assignee => {
+      if (!ownerStatsMap[assignee]) {
+        ownerStatsMap[assignee] = { name: assignee };
+        uniqueStatuses.forEach(s => ownerStatsMap[assignee][s] = 0);
+      }
+      ownerStatsMap[assignee][task.status] += 1;
+    });
   });
   const ownerData = Object.values(ownerStatsMap);
 
