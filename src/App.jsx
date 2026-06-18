@@ -45,8 +45,8 @@ function App() {
               name: row['Objective/KR'] || 'Untitled',
               category: row['Project'] || 'No Project',
               assignee: row['Owner'] || 'Unassigned',
-              priority: row['Priority'] || 'Thấp',
-              status: row['Status'] || 'Chưa bắt đầu',
+              priority: row['Priority'] || '🧊 Thấp',
+              status: row['Status'] || '🚦 Chưa bắt đầu',
               dueDate: row['Due Date'] || '-',
               progress: progress > 100 ? 100 : progress
             };
@@ -107,12 +107,25 @@ function App() {
   const handleAddTaskSubmit = async (formData) => {
     setIsSubmitting(true);
     try {
+      // Thêm task vào giao diện ngay lập tức (Optimistic Update) vì file CSV của Google có thể mất 5 phút để cập nhật
+      const newTask = {
+        id: `T-Mới-${Date.now().toString().slice(-4)}`,
+        name: formData.name || 'Untitled',
+        category: formData.category || 'No Project',
+        assignee: formData.assignee || 'Unassigned',
+        priority: formData.priority || '🧊 Thấp',
+        status: formData.status || '🚦 Chưa bắt đầu',
+        dueDate: formData.dueDate || '-',
+        progress: 0
+      };
+      setTasks(prev => [...prev, newTask]);
+
       await sendPostRequest({ action: 'addTask', ...formData });
       setTimeout(() => {
         setIsModalOpen(false);
         setIsSubmitting(false);
-        fetchData(); // Reload all
-      }, 1500);
+        // fetchData(); // Tạm tắt fetchData ngay lập tức vì CSV bị delay 5 phút
+      }, 500);
     } catch (err) {
       console.error(err);
       setIsSubmitting(false);

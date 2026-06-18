@@ -4,10 +4,15 @@ import { RadialBarChart, RadialBar, ResponsiveContainer } from 'recharts';
 import { Trash2 } from 'lucide-react';
 
 export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote, users = [] }) {
-  const uniqueStatuses = ['🚦 Chưa bắt đầu', '⏳ Chờ xử lý', '🏃‍♂️ Đang thực hiện', '✅ Hoàn thành'];
-  const allStatuses = [...new Set([...uniqueStatuses, ...tasks.map(t => t.status).filter(Boolean)])];
+  const [filterOwner, setFilterOwner] = useState('');
+  
+  // Apply filter
+  const filteredTasks = filterOwner ? tasks.filter(t => t.assignee === filterOwner) : tasks;
 
-  const getTasksByStatus = (status) => tasks.filter(t => t.status === status);
+  const uniqueStatuses = ['🚦 Chưa bắt đầu', '⏳ Chờ xử lý', '🏃‍♂️ Đang thực hiện', '✅ Hoàn thành'];
+  const allStatuses = [...new Set([...uniqueStatuses, ...filteredTasks.map(t => t.status).filter(Boolean)])];
+
+  const getTasksByStatus = (status) => filteredTasks.filter(t => t.status === status);
 
   const calculateDaysRem = (dueDateStr) => {
     if (!dueDateStr || dueDateStr === '-') return '-';
@@ -71,9 +76,13 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
             
             <div style={{ color: '#3b82f6', fontWeight: 700, display: 'flex', alignItems: 'center' }}>OWNER</div>
             <div>
-              <select style={{ width: '100%', padding: '0.2rem 0.5rem', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
-                <option>👩‍💼 Tôi (Bản thân)</option>
-                <option>Tất cả</option>
+              <select 
+                value={filterOwner} 
+                onChange={e => setFilterOwner(e.target.value)} 
+                style={{ width: '100%', padding: '0.2rem 0.5rem', border: '1px solid #e2e8f0', borderRadius: '4px' }}
+              >
+                <option value="">Tất cả</option>
+                {users.map(u => <option key={u} value={u}>{u}</option>)}
               </select>
             </div>
           </div>

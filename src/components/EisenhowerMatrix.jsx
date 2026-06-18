@@ -3,10 +3,15 @@ import { getPriorityColor } from '../helpers';
 import { Trash2 } from 'lucide-react';
 
 export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDeleteNote, users = [] }) {
-  const doFirst = tasks.filter(t => t.priority && (t.priority.toLowerCase().includes('khẩn') || t.priority.toLowerCase().includes('urgent')));
-  const schedule = tasks.filter(t => t.priority && (t.priority.toLowerCase().includes('cao') || t.priority.toLowerCase().includes('high')));
-  const delegate = tasks.filter(t => t.priority && (t.priority.toLowerCase().includes('trung bình') || t.priority.toLowerCase().includes('medium')));
-  const dontDo = tasks.filter(t => t.priority && (t.priority.toLowerCase().includes('thấp') || t.priority.toLowerCase().includes('low')));
+  const [filterOwner, setFilterOwner] = useState('');
+  
+  // Apply filter
+  const filteredTasks = filterOwner ? tasks.filter(t => t.assignee === filterOwner) : tasks;
+
+  const doFirst = filteredTasks.filter(t => t.priority && (t.priority.toLowerCase().includes('khẩn') || t.priority.toLowerCase().includes('urgent')));
+  const schedule = filteredTasks.filter(t => t.priority && (t.priority.toLowerCase().includes('cao') || t.priority.toLowerCase().includes('high')));
+  const delegate = filteredTasks.filter(t => t.priority && (t.priority.toLowerCase().includes('trung bình') || t.priority.toLowerCase().includes('medium')));
+  const dontDo = filteredTasks.filter(t => t.priority && (t.priority.toLowerCase().includes('thấp') || t.priority.toLowerCase().includes('low')));
 
   const [newNoteText, setNewNoteText] = useState('');
   const [newNoteAuthor, setNewNoteAuthor] = useState('');
@@ -63,9 +68,13 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
             
             <div style={{ color: '#3b82f6', fontWeight: 700, display: 'flex', alignItems: 'center' }}>OWNER</div>
             <div>
-              <select style={{ width: '100%', padding: '0.2rem 0.5rem', border: '1px solid #e2e8f0', borderRadius: '4px' }}>
-                <option>👩‍💼 Tôi (Bản thân)</option>
-                <option>Tất cả</option>
+              <select 
+                value={filterOwner} 
+                onChange={e => setFilterOwner(e.target.value)} 
+                style={{ width: '100%', padding: '0.2rem 0.5rem', border: '1px solid #e2e8f0', borderRadius: '4px' }}
+              >
+                <option value="">Tất cả</option>
+                {users.map(u => <option key={u} value={u}>{u}</option>)}
               </select>
             </div>
           </div>
