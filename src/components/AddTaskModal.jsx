@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Loader2 } from 'lucide-react';
 
-export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting }) {
+export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, settings }) {
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -45,11 +45,21 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting }
           <div className="form-row">
             <div className="form-group">
               <label>Dự án (Category)</label>
-              <input type="text" name="category" value={formData.category} onChange={handleChange} placeholder="VD: BiPlus Portal" />
+              <div className="select-wrapper">
+                <select name="category" value={formData.category} onChange={handleChange}>
+                  <option value="">-- Chọn dự án --</option>
+                  {settings?.projects?.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
             </div>
             <div className="form-group">
               <label>Người phụ trách (Owner)</label>
-              <input type="text" name="assignee" value={formData.assignee} onChange={handleChange} placeholder="VD: Thu Nguyen" />
+              <div className="select-wrapper">
+                <select name="assignee" value={formData.assignee} onChange={handleChange}>
+                  <option value="">-- Chọn người phụ trách --</option>
+                  {settings?.users?.map(u => <option key={u} value={u}>{u}</option>)}
+                </select>
+              </div>
             </div>
           </div>
 
