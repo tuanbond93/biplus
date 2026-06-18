@@ -44,22 +44,29 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
 
           <div className="form-row">
             <div className="form-group">
-              <label>Dự án (Category)</label>
-              <div className="select-wrapper">
-                <select name="category" value={formData.category} onChange={handleChange}>
-                  <option value="">-- Chọn dự án --</option>
-                  {settings?.projects?.map(p => <option key={p} value={p}>{p}</option>)}
-                </select>
-              </div>
+              <label>Dự án <span style={{ color: '#ef4444' }}>*</span></label>
+              <input
+                list="project-list"
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                placeholder="Gõ để tìm hoặc chọn dự án..."
+                required
+              />
+              <datalist id="project-list">
+                {settings?.projects?.map(p => <option key={p} value={p} />)}
+              </datalist>
             </div>
             <div className="form-group">
-              <label>Người phụ trách (Owner)</label>
-              <div className="select-wrapper">
-                <select name="assignee" value={formData.assignee} onChange={handleChange}>
-                  <option value="">-- Chọn người phụ trách --</option>
-                  {settings?.users?.map(u => <option key={u} value={u}>{u}</option>)}
-                </select>
-              </div>
+              <label>Người phụ trách</label>
+              <input
+                list="owner-list"
+                value={formData.assignee}
+                onChange={(e) => setFormData({ ...formData, assignee: e.target.value })}
+                placeholder="Gõ để tìm người phụ trách..."
+              />
+              <datalist id="owner-list">
+                {settings?.users?.map(u => <option key={u} value={u} />)}
+              </datalist>
             </div>
           </div>
 
