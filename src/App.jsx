@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Papa from 'papaparse';
 import { LayoutDashboard, CheckSquare, Settings, LogOut, Columns, Grid, Menu, X, Loader2 } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import TaskTable from './components/TaskTable';
 import KanbanBoard from './components/KanbanBoard';
 import EisenhowerMatrix from './components/EisenhowerMatrix';
+import AddTaskModal from './components/AddTaskModal';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -12,24 +13,28 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // The published Google Sheet CSV URL
+  // The published Google Sheet CSV URL for fetching
   const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSZ7o3cXQMaWIn_xPdTthvO11g7s4u6So32rDrJXoX-arcwHHb8DemgvPr0q4rmpM85xFlUL0wZ_IUe/pub?output=csv';
+  
+  // The Google Apps Script Web App URL for POSTing new tasks
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbylYsVMYZ9X3m3VGbRgwfueP7WzmZ3mkLWVjTm3pikFrJRul-YOjLZaPCwTOT3LH9Ke4g/exec';
 
-  useEffect(() => {
-    Papa.parse(SHEET_CSV_URL, {
+  const fetchTasks = useCallback(() => {
+    setLoading(true);
+    // Append a timestamp to bypass caching when fetching new data
+    const urlWithCacheBuster = `${SHEET_CSV_URL}&t=${Date.now()}`;
+    
+    Papa.parse(urlWithCacheBuster, {
       download: true,
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
         try {
-          // Filter out truly empty rows that might just contain FALSE
           const validRows = results.data.filter(row => row['Objective/KR'] && row['Objective/KR'].trim() !== '');
-          
-          if (validRows.length === 0) {
-            console.warn("No valid tasks found. Did you enter data?");
-          }
-
           const fetchedTasks = validRows.map((row, index) => {
             const estimate = parseFloat(row['Estimate Point']) || 0;
             const done = parseFloat(row['Done Point']) || 0;
@@ -59,7 +64,11 @@ function App() {
         setLoading(false);
       }
     });
-  }, []);
+  }, [SHEET_CSV_URL]);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   
@@ -68,7 +77,35 @@ function App() {
     setSidebarOpen(false); // Close sidebar on mobile when a tab is selected
   };
 
-  if (loading) {
+  const handleAddTaskSubmit = async (formData) => {
+    setIsSubmitting(true);
+    try {
+      // We use no-cors because Google Apps Script Web App will block normal CORS post response
+      // But it successfully receives the data!
+      await fetch(WEB_APP_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+      
+      // Close modal and refresh data after 1.5 seconds to ensure Google Sheets updated
+      setTimeout(() => {
+        setIsModalOpen(false);
+        setIsSubmitting(false);
+        fetchTasks();
+      }, 1500);
+      
+    } catch (err) {
+      console.error('Failed to add task:', err);
+      alert('Đã xảy ra lỗi khi thêm công việc.');
+      setIsSubmitting(false);
+    }
+  };
+
+  if (loading && tasks.length === 0) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: '1rem', background: 'var(--bg-main)' }}>
         <Loader2 size={48} color="var(--primary)" style={{ animation: 'spin 1s linear infinite' }} />
@@ -78,7 +115,7 @@ function App() {
     );
   }
 
-  if (error) {
+  if (error && tasks.length === 0) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-main)', color: 'var(--danger)', flexDirection: 'column', gap: '1rem' }}>
         <h2>Lỗi kết nối dữ liệu</h2>
@@ -90,6 +127,14 @@ function App() {
 
   return (
     <div className="app-container">
+      {/* Modal Add Task */}
+      <AddTaskModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        onSubmit={handleAddTaskSubmit}
+        isSubmitting={isSubmitting}
+      />
+
       {/* Sidebar Overlay for Mobile */}
       <div 
         className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} 
@@ -176,17 +221,18 @@ function App() {
                 {activeTab === 'tasks' && 'Task Management'}
               </h2>
               <p style={{ margin: 0, marginTop: '0.25rem', color: 'var(--text-muted)' }}>
-                {tasks.length === 0 ? 'Chưa có task nào trên Google Sheet!' : `Đang hiển thị ${tasks.length} tasks từ Live Data`}
+                {loading ? 'Đang cập nhật dữ liệu...' : (tasks.length === 0 ? 'Chưa có task nào trên Google Sheet!' : `Đang hiển thị ${tasks.length} tasks từ Live Data`)}
               </p>
             </div>
           </div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>+ Add Task</button>
             <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem 1rem', borderRadius: '999px', background: 'var(--card-bg)' }}>
               <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: 'var(--text-main)' }}>
                 T
               </div>
-              <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>Thu Nguyen</span>
+              <span style={{ fontWeight: 600, color: 'var(--text-main)', display: 'none', '@media (min-width: 768px)': { display: 'block' } }}>Thu Nguyen</span>
             </div>
           </div>
         </header>
@@ -195,7 +241,7 @@ function App() {
           {activeTab === 'dashboard' && <Dashboard tasks={tasks} />}
           {activeTab === 'kanban' && <KanbanBoard tasks={tasks} />}
           {activeTab === 'eisenhower' && <EisenhowerMatrix tasks={tasks} />}
-          {activeTab === 'tasks' && <TaskTable tasks={tasks} />}
+          {activeTab === 'tasks' && <TaskTable tasks={tasks} onOpenModal={() => setIsModalOpen(true)} />}
         </div>
       </main>
     </div>
