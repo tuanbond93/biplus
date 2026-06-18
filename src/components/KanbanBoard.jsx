@@ -1,8 +1,10 @@
 import React from 'react';
-import { STATUSES, STATUS_COLORS } from '../data';
 import { Clock } from 'lucide-react';
+import { getStatusColor } from '../helpers';
 
 export default function KanbanBoard({ tasks }) {
+  const uniqueStatuses = [...new Set(tasks.map(t => t.status).filter(Boolean))];
+  
   const getTasksByStatus = (status) => tasks.filter(t => t.status === status);
 
   return (
@@ -15,9 +17,9 @@ export default function KanbanBoard({ tasks }) {
         paddingBottom: '1rem',
         minHeight: '600px'
       }}>
-        {STATUSES.map(status => {
+        {uniqueStatuses.map(status => {
           const columnTasks = getTasksByStatus(status);
-          const color = STATUS_COLORS[status] || '#94a3b8';
+          const color = getStatusColor(status);
           
           return (
             <div key={status} style={{
@@ -74,7 +76,7 @@ export default function KanbanBoard({ tasks }) {
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           fontSize: '0.75rem', fontWeight: 700
                         }}>
-                          {task.assignee.charAt(0)}
+                          {task.assignee ? task.assignee.charAt(0) : '?'}
                         </div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>

@@ -1,10 +1,15 @@
 import React from 'react';
 
 export default function EisenhowerMatrix({ tasks }) {
-  const doFirst = tasks.filter(t => t.priority === '🚨 Khẩn cấp');
-  const schedule = tasks.filter(t => t.priority === '🔥 Cao');
-  const delegate = tasks.filter(t => t.priority === '⚡ Trung bình');
-  const dontDo = tasks.filter(t => t.priority === '🧊 Thấp');
+  // Use fuzzy matching for priorities in case they change
+  const doFirst = tasks.filter(t => t.priority && (t.priority.toLowerCase().includes('khẩn') || t.priority.toLowerCase().includes('urgent')));
+  const schedule = tasks.filter(t => t.priority && (t.priority.toLowerCase().includes('cao') || t.priority.toLowerCase().includes('high') && !t.priority.toLowerCase().includes('khẩn')));
+  const delegate = tasks.filter(t => t.priority && (t.priority.toLowerCase().includes('trung bình') || t.priority.toLowerCase().includes('medium')));
+  const dontDo = tasks.filter(t => t.priority && (t.priority.toLowerCase().includes('thấp') || t.priority.toLowerCase().includes('low')));
+
+  // For tasks that don't match any priority string well, put them in a catch-all
+  const classifiedIds = [...doFirst, ...schedule, ...delegate, ...dontDo].map(t => t.id);
+  const unclassified = tasks.filter(t => !classifiedIds.includes(t.id));
 
   const renderQuadrant = (title, subtitle, quadrantTasks, bgColor) => (
     <div style={{
@@ -55,11 +60,18 @@ export default function EisenhowerMatrix({ tasks }) {
         gridTemplateColumns: '1fr 1fr',
         gap: '1.5rem'
       }}>
-        {renderQuadrant('DO FIRST', 'Important & Urgent', doFirst, 'rgba(239, 68, 68, 0.05)')}
-        {renderQuadrant('SCHEDULE', 'Important & Not Urgent', schedule, 'rgba(59, 130, 246, 0.05)')}
-        {renderQuadrant('DELEGATE', 'Not Important & Urgent', delegate, 'rgba(245, 158, 11, 0.05)')}
-        {renderQuadrant('DON\'T DO', 'Not Important & Not Urgent', dontDo, 'rgba(148, 163, 184, 0.05)')}
+        {renderQuadrant('DO FIRST', 'Important & Urgent (Khẩn cấp)', doFirst, 'rgba(239, 68, 68, 0.05)')}
+        {renderQuadrant('SCHEDULE', 'Important & Not Urgent (Cao)', schedule, 'rgba(59, 130, 246, 0.05)')}
+        {renderQuadrant('DELEGATE', 'Not Important & Urgent (Trung bình)', delegate, 'rgba(245, 158, 11, 0.05)')}
+        {renderQuadrant('DON\'T DO', 'Not Important & Not Urgent (Thấp)', dontDo, 'rgba(148, 163, 184, 0.05)')}
       </div>
+      
+      {unclassified.length > 0 && (
+        <div style={{ marginTop: '2rem' }}>
+          <h3 style={{ color: 'var(--text-main)', marginBottom: '1rem' }}>Unclassified Tasks</h3>
+          {renderQuadrant('OTHER', 'No matching priority', unclassified, 'rgba(148, 163, 184, 0.05)')}
+        </div>
+      )}
     </div>
   );
 }

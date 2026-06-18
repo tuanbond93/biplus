@@ -4,7 +4,7 @@ import {
   RadialBarChart, RadialBar, PolarAngleAxis
 } from 'recharts';
 import { CheckCircle, Clock, AlertCircle, ListTodo } from 'lucide-react';
-import { STATUS_COLORS, STATUSES } from '../data';
+import { getStatusColor } from '../helpers';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -23,18 +23,21 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function Dashboard({ tasks }) {
+  const uniqueStatuses = [...new Set(tasks.map(t => t.status).filter(Boolean))];
+
   // 1. Calculate Summary Stats
   const totalTasks = tasks.length;
-  const doneTasks = tasks.filter(t => t.status === '✅ Hoàn thành').length;
-  const activeTasks = tasks.filter(t => t.status === '🏃‍♂️ Đang thực hiện' || t.status === '⏳ Chờ xử lý').length;
-  const overdueTasks = tasks.filter(t => t.status === '🐢 Bị chậm trễ').length;
+  const doneTasks = tasks.filter(t => t.status && (t.status.toLowerCase().includes('hoàn thành') || t.status.toLowerCase().includes('done'))).length;
+  const activeTasks = tasks.filter(t => t.status && (t.status.toLowerCase().includes('đang') || t.status.toLowerCase().includes('chờ') || t.status.toLowerCase().includes('progress'))).length;
+  const overdueTasks = tasks.filter(t => t.status && (t.status.toLowerCase().includes('trễ') || t.status.toLowerCase().includes('chậm') || t.status.toLowerCase().includes('overdue'))).length;
 
   // 2. Data for Owner x Status Chart
   const ownerStatsMap = {};
   tasks.forEach(task => {
+    if (!task.assignee) return;
     if (!ownerStatsMap[task.assignee]) {
       ownerStatsMap[task.assignee] = { name: task.assignee };
-      STATUSES.forEach(s => ownerStatsMap[task.assignee][s] = 0);
+      uniqueStatuses.forEach(s => ownerStatsMap[task.assignee][s] = 0);
     }
     ownerStatsMap[task.assignee][task.status] += 1;
   });
@@ -43,9 +46,10 @@ export default function Dashboard({ tasks }) {
   // 3. Data for Category x Status Chart
   const categoryStatsMap = {};
   tasks.forEach(task => {
+    if (!task.category) return;
     if (!categoryStatsMap[task.category]) {
       categoryStatsMap[task.category] = { name: task.category };
-      STATUSES.forEach(s => categoryStatsMap[task.category][s] = 0);
+      uniqueStatuses.forEach(s => categoryStatsMap[task.category][s] = 0);
     }
     categoryStatsMap[task.category][task.status] += 1;
   });
@@ -56,11 +60,11 @@ export default function Dashboard({ tasks }) {
     ? Math.round(tasks.reduce((sum, task) => sum + task.progress, 0) / totalTasks) 
     : 0;
     
-  const progressData = [{ name: 'DoD Progress', value: avgProgress, fill: STATUS_COLORS['✅ Hoàn thành'] }];
+  const progressData = [{ name: 'DoD Progress', value: avgProgress, fill: getStatusColor('Hoàn thành') }];
 
   return (
     <div className="dashboard">
-      <h2 style={{ marginBottom: '1.5rem', color: 'var(--text-main)' }}>Overview Dashboard</h2>
+      <h2 style={{ marginBottom: '1.5rem', color: 'var(--text-main)', fontFamily: 'var(--font-accent)' }}>Overview Dashboard</h2>
       
       {/* Summary Cards */}
       <div className="dashboard-grid" style={{ marginBottom: '2rem' }}>
@@ -89,7 +93,7 @@ export default function Dashboard({ tasks }) {
             <Clock size={24} />
           </div>
           <div>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Đang làm & Chờ xử lý</p>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Đang làm / Chờ</p>
             <h3 style={{ margin: 0, fontSize: '1.75rem', color: 'var(--text-main)' }}>{activeTasks}</h3>
           </div>
         </div>
@@ -118,7 +122,7 @@ export default function Dashboard({ tasks }) {
                 <YAxis stroke="var(--text-muted)" tick={{fill: 'var(--text-muted)'}} axisLine={false} tickLine={false} />
                 <RechartsTooltip content={<CustomTooltip />} />
                 <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
-                {STATUSES.map(s => <Bar key={s} dataKey={s} stackId="a" fill={STATUS_COLORS[s]} />)}
+                {uniqueStatuses.map(s => <Bar key={s} dataKey={s} stackId="a" fill={getStatusColor(s)} />)}
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -135,7 +139,7 @@ export default function Dashboard({ tasks }) {
                 <YAxis stroke="var(--text-muted)" tick={{fill: 'var(--text-muted)'}} axisLine={false} tickLine={false} />
                 <RechartsTooltip content={<CustomTooltip />} />
                 <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
-                {STATUSES.map(s => <Bar key={s} dataKey={s} stackId="a" fill={STATUS_COLORS[s]} />)}
+                {uniqueStatuses.map(s => <Bar key={s} dataKey={s} stackId="a" fill={getStatusColor(s)} />)}
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -171,10 +175,10 @@ export default function Dashboard({ tasks }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.875rem', color: 'var(--text-main)', fontWeight: 600 }}>Hoàn thành (100%)</span>
-                  <span style={{ fontWeight: 700, color: STATUS_COLORS['✅ Hoàn thành'] }}>{doneTasks} tasks</span>
+                  <span style={{ fontWeight: 700, color: getStatusColor('Hoàn thành') }}>{doneTasks} tasks</span>
                 </div>
                 <div className="progress-bar-bg">
-                  <div className="progress-bar-fill" style={{ width: `${(doneTasks/totalTasks)*100}%`, background: STATUS_COLORS['✅ Hoàn thành'] }}></div>
+                  <div className="progress-bar-fill" style={{ width: `${(doneTasks/totalTasks)*100}%`, background: getStatusColor('Hoàn thành') }}></div>
                 </div>
               </div>
             </div>

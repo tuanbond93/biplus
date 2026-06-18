@@ -1,15 +1,65 @@
-import React, { useState } from 'react';
-import { LayoutDashboard, CheckSquare, Settings, LogOut, Columns, Grid, Menu, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import Papa from 'papaparse';
+import { LayoutDashboard, CheckSquare, Settings, LogOut, Columns, Grid, Menu, X, Loader2 } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import TaskTable from './components/TaskTable';
 import KanbanBoard from './components/KanbanBoard';
 import EisenhowerMatrix from './components/EisenhowerMatrix';
-import { mockTasks } from './data';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [tasks, setTasks] = useState(mockTasks);
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // The published Google Sheet CSV URL
+  const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSZ7o3cXQMaWIn_xPdTthvO11g7s4u6So32rDrJXoX-arcwHHb8DemgvPr0q4rmpM85xFlUL0wZ_IUe/pub?output=csv';
+
+  useEffect(() => {
+    Papa.parse(SHEET_CSV_URL, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        try {
+          // Filter out truly empty rows that might just contain FALSE
+          const validRows = results.data.filter(row => row['Objective/KR'] && row['Objective/KR'].trim() !== '');
+          
+          if (validRows.length === 0) {
+            console.warn("No valid tasks found. Did you enter data?");
+          }
+
+          const fetchedTasks = validRows.map((row, index) => {
+            const estimate = parseFloat(row['Estimate Point']) || 0;
+            const done = parseFloat(row['Done Point']) || 0;
+            const progress = estimate > 0 ? Math.round((done / estimate) * 100) : 0;
+            
+            return {
+              id: `T-${index + 1}`,
+              name: row['Objective/KR'] || 'Untitled',
+              category: row['Project'] || 'No Project',
+              assignee: row['Owner'] || 'Unassigned',
+              priority: row['Priority'] || 'Thấp',
+              status: row['Status'] || 'Chưa bắt đầu',
+              dueDate: row['Due Date'] || '-',
+              progress: progress > 100 ? 100 : progress
+            };
+          });
+
+          setTasks(fetchedTasks);
+          setLoading(false);
+        } catch (err) {
+          setError(err.message);
+          setLoading(false);
+        }
+      },
+      error: (error) => {
+        setError(error.message);
+        setLoading(false);
+      }
+    });
+  }, []);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   
@@ -17,6 +67,26 @@ function App() {
     setActiveTab(tab);
     setSidebarOpen(false); // Close sidebar on mobile when a tab is selected
   };
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: '1rem', background: 'var(--bg-main)' }}>
+        <Loader2 size={48} color="var(--primary)" style={{ animation: 'spin 1s linear infinite' }} />
+        <p style={{ color: 'var(--text-main)', fontWeight: 600, fontFamily: 'var(--font-accent)' }}>Đang tải dữ liệu Live từ Google Sheets...</p>
+        <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-main)', color: 'var(--danger)', flexDirection: 'column', gap: '1rem' }}>
+        <h2>Lỗi kết nối dữ liệu</h2>
+        <p>{error}</p>
+        <button className="btn btn-primary" onClick={() => window.location.reload()}>Thử lại</button>
+      </div>
+    );
+  }
 
   return (
     <div className="app-container">
@@ -105,7 +175,9 @@ function App() {
                 {activeTab === 'eisenhower' && 'Eisenhower Matrix'}
                 {activeTab === 'tasks' && 'Task Management'}
               </h2>
-              <p style={{ margin: 0, marginTop: '0.25rem', color: 'var(--text-muted)' }}>Welcome back, Thu!</p>
+              <p style={{ margin: 0, marginTop: '0.25rem', color: 'var(--text-muted)' }}>
+                {tasks.length === 0 ? 'Chưa có task nào trên Google Sheet!' : `Đang hiển thị ${tasks.length} tasks từ Live Data`}
+              </p>
             </div>
           </div>
           

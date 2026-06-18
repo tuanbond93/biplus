@@ -1,9 +1,9 @@
 import React from 'react';
-import { STATUS_COLORS } from '../data';
+import { getStatusColor, getPriorityColor } from '../helpers';
 
 export default function TaskTable({ tasks }) {
   const getStatusBadge = (status) => {
-    const color = STATUS_COLORS[status] || '#cbd5e1';
+    const color = getStatusColor(status);
     return (
       <span style={{
         background: `${color}15`,
@@ -21,12 +21,7 @@ export default function TaskTable({ tasks }) {
   };
 
   const getPriorityBadge = (priority) => {
-    let color = '#94a3b8';
-    if (priority === '🚨 Khẩn cấp') color = '#ef4444';
-    if (priority === '🔥 Cao') color = '#f97316';
-    if (priority === '⚡ Trung bình') color = '#3b82f6';
-    if (priority === '🧊 Thấp') color = '#94a3b8';
-
+    const color = getPriorityColor(priority);
     return (
       <span style={{
         color: color,
@@ -76,7 +71,7 @@ export default function TaskTable({ tasks }) {
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: '0.75rem', fontWeight: 700
                     }}>
-                      {task.assignee.charAt(0)}
+                      {task.assignee ? task.assignee.charAt(0) : '?'}
                     </div>
                     {task.assignee}
                   </div>
@@ -86,7 +81,7 @@ export default function TaskTable({ tasks }) {
                     <div className="progress-bar-bg" style={{ flex: 1 }}>
                       <div 
                         className="progress-bar-fill" 
-                        style={{ width: `${task.progress}%`, background: STATUS_COLORS[task.status] || 'var(--primary)' }}
+                        style={{ width: `${task.progress}%`, background: getStatusColor(task.status) || 'var(--primary)' }}
                       ></div>
                     </div>
                     <span style={{ fontSize: '0.75rem', minWidth: '35px', fontWeight: 600, color: 'var(--text-muted)' }}>{task.progress}%</span>
