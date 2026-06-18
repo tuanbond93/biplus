@@ -143,6 +143,19 @@ function App() {
     await sendPostRequest({ action: 'deleteNote', noteId });
   };
 
+  const handleDeleteTask = async (taskName) => {
+    if (!confirm(`Bạn có chắc chắn muốn xóa task "${taskName}" không?`)) return;
+    
+    // Optimistic UI Update
+    setTasks(prev => prev.filter(t => t.name !== taskName));
+    
+    try {
+      await sendPostRequest({ action: 'deleteTask', taskName });
+    } catch (err) {
+      console.error('Failed to delete task', err);
+    }
+  };
+
   const handleUpdateTaskStatus = async (taskName, newStatus) => {
     // Optimistic UI Update
     setTasks(prev => prev.map(t => t.name === taskName ? { ...t, status: newStatus } : t));
@@ -271,7 +284,7 @@ function App() {
           {activeTab === 'dashboard' && <Dashboard tasks={tasks} />}
           {activeTab === 'kanban' && <KanbanBoard tasks={tasks} notes={notes} onAddNote={handleAddNote} onDeleteNote={handleDeleteNote} users={settings.users} onUpdateTaskStatus={handleUpdateTaskStatus} />}
           {activeTab === 'eisenhower' && <EisenhowerMatrix tasks={tasks} notes={notes} onAddNote={handleAddNote} onDeleteNote={handleDeleteNote} users={settings.users} onUpdateTaskStatus={handleUpdateTaskStatus} />}
-          {activeTab === 'tasks' && <TaskTable tasks={tasks} />}
+          {activeTab === 'tasks' && <TaskTable tasks={tasks} onDeleteTask={handleDeleteTask} />}
           {activeTab === 'settings' && <Settings settings={settings} onSaveSettings={handleSaveSettings} isSaving={isSavingSettings} />}
         </div>
       </main>

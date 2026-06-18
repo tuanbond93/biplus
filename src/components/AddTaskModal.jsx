@@ -1,5 +1,91 @@
-import React, { useState } from 'react';
-import { X, Loader2 } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { X, Loader2, ChevronDown } from 'lucide-react';
+
+const SearchableDropdown = ({ options = [], value, onChange, placeholder }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState(value || '');
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    setSearch(value || '');
+  }, [value]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setIsOpen(false);
+        if (value && !options.includes(search)) {
+          setSearch(value);
+        }
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [wrapperRef, value, search, options]);
+
+  const filteredOptions = options.filter(opt => opt.toLowerCase().includes(search.toLowerCase()));
+
+  return (
+    <div ref={wrapperRef} style={{ position: 'relative', width: '100%' }}>
+      <div style={{ position: 'relative' }}>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            onChange(e.target.value);
+            setIsOpen(true);
+          }}
+          onClick={() => setIsOpen(true)}
+          placeholder={placeholder}
+          style={{ 
+            width: '100%', padding: '0.8rem 1rem', paddingRight: '2.5rem',
+            borderRadius: '10px', border: '1.5px solid var(--card-border)',
+            background: 'var(--bg-main)', color: 'var(--text-main)',
+            fontFamily: 'inherit', fontSize: '0.95rem'
+          }}
+        />
+        <div 
+          onClick={() => setIsOpen(!isOpen)}
+          style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', color: 'var(--text-muted)' }}
+        >
+          <ChevronDown size={16} />
+        </div>
+      </div>
+      
+      {isOpen && (
+        <div style={{
+          position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px',
+          background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 10,
+          maxHeight: '200px', overflowY: 'auto'
+        }}>
+          {filteredOptions.length > 0 ? filteredOptions.map((opt, idx) => (
+            <div 
+              key={idx}
+              onClick={() => {
+                setSearch(opt);
+                onChange(opt);
+                setIsOpen(false);
+              }}
+              style={{
+                padding: '0.75rem 1rem', cursor: 'pointer', fontSize: '0.9rem',
+                borderBottom: idx < filteredOptions.length - 1 ? '1px solid #f1f5f9' : 'none',
+                color: 'var(--text-main)'
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              {opt}
+            </div>
+          )) : (
+            <div style={{ padding: '0.75rem 1rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>Không tìm thấy</div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, settings }) {
   const [formData, setFormData] = useState({
@@ -55,28 +141,21 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
           <div className="form-row">
             <div className="form-group">
               <label>Dự án <span style={{ color: '#ef4444' }}>*</span></label>
-              <input
-                list="project-list"
+              <SearchableDropdown 
+                options={settings?.projects || []}
                 value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                placeholder="Gõ để tìm hoặc chọn dự án..."
-                required
+                onChange={(val) => setFormData({ ...formData, category: val })}
+                placeholder="Tìm hoặc chọn dự án..."
               />
-              <datalist id="project-list">
-                {settings?.projects?.map(p => <option key={p} value={p} />)}
-              </datalist>
             </div>
             <div className="form-group">
               <label>Người phụ trách</label>
-              <input
-                list="owner-list"
+              <SearchableDropdown 
+                options={settings?.users || []}
                 value={formData.assignee}
-                onChange={(e) => setFormData({ ...formData, assignee: e.target.value })}
-                placeholder="Gõ để tìm người phụ trách..."
+                onChange={(val) => setFormData({ ...formData, assignee: val })}
+                placeholder="Tìm người phụ trách..."
               />
-              <datalist id="owner-list">
-                {settings?.users?.map(u => <option key={u} value={u} />)}
-              </datalist>
             </div>
           </div>
 
