@@ -3,9 +3,11 @@ import { getStatusColor, getPriorityColor } from '../helpers';
 import { RadialBarChart, RadialBar, ResponsiveContainer } from 'recharts';
 import { Trash2 } from 'lucide-react';
 
-export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote, users = [] }) {
+export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote, users = [], onUpdateTaskStatus }) {
   const [filterOwner, setFilterOwner] = useState('');
-  
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [updateStatus, setUpdateStatus] = useState('');
+
   // Apply filter
   const filteredTasks = filterOwner ? tasks.filter(t => t.assignee === filterOwner) : tasks;
 
@@ -37,6 +39,19 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
     setNewNoteText('');
   };
 
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
+    setUpdateStatus(task.status);
+  };
+
+  const handleUpdateStatus = () => {
+    if (selectedTask && updateStatus !== selectedTask.status) {
+      onUpdateTaskStatus(selectedTask.name, updateStatus);
+      setSelectedTask(prev => ({ ...prev, status: updateStatus }));
+      alert(`Đã cập nhật trạng thái thành: ${updateStatus}`);
+    }
+  };
+
   const renderDonutChart = (columnTasksCount, totalTasksCount, color) => {
     const percentage = totalTasksCount > 0 ? (columnTasksCount / totalTasksCount) * 100 : 0;
     const data = [{ name: 'Tasks', value: percentage, fill: color }];
@@ -65,15 +80,6 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
         <div style={{ background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
           <h4 style={{ textAlign: 'center', margin: '0 0 1rem 0', fontSize: '0.85rem', color: 'var(--text-main)' }}>FILTER BY</h4>
           <div style={{ display: 'grid', gridTemplateColumns: '70px 1fr', gap: '0.5rem', fontSize: '0.8rem' }}>
-            <div style={{ color: '#3b82f6', fontWeight: 700, display: 'flex', alignItems: 'center' }}>YEAR</div>
-            <div><input type="text" defaultValue="2025" style={{ width: '100%', padding: '0.2rem 0.5rem', border: '1px solid #e2e8f0', borderRadius: '4px' }}/></div>
-            
-            <div style={{ color: '#3b82f6', fontWeight: 700, display: 'flex', alignItems: 'center' }}>MONTH</div>
-            <div><input type="text" style={{ width: '100%', padding: '0.2rem 0.5rem', border: '1px solid #e2e8f0', borderRadius: '4px' }}/></div>
-            
-            <div style={{ color: '#3b82f6', fontWeight: 700, display: 'flex', alignItems: 'center' }}>WEEK</div>
-            <div><input type="text" style={{ width: '100%', padding: '0.2rem 0.5rem', border: '1px solid #e2e8f0', borderRadius: '4px' }}/></div>
-            
             <div style={{ color: '#3b82f6', fontWeight: 700, display: 'flex', alignItems: 'center' }}>OWNER</div>
             <div>
               <select 
@@ -91,14 +97,53 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
         {/* TASK UPDATER */}
         <div style={{ background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
           <h4 style={{ textAlign: 'center', margin: '0 0 1rem 0', fontSize: '0.85rem', color: 'var(--text-main)' }}>TASK UPDATER</h4>
-          <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '0.5rem', fontSize: '0.8rem' }}>
-            <div style={{ color: '#ef4444', fontWeight: 700 }}>TASK</div><div>-</div>
-            <div style={{ color: '#ef4444', fontWeight: 700 }}>DUE DATE</div><div>-</div>
-            <div style={{ color: '#ef4444', fontWeight: 700 }}>STATUS</div><div style={{ fontSize: '0.75rem' }}>🏃‍♂️ Đang thực hiện</div>
-            <div style={{ color: '#ef4444', fontWeight: 700 }}>PRIORITY</div><div>-</div>
-            <div style={{ color: '#ef4444', fontWeight: 700 }}>OWNER</div><div>-</div>
-            <div style={{ color: '#10b981', fontWeight: 700, marginTop: '0.5rem' }}>Update?</div><div style={{ marginTop: '0.5rem' }}><input type="checkbox" /></div>
-          </div>
+          
+          {!selectedTask ? (
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', padding: '1rem 0' }}>
+              Bấm vào 1 task bên phải để xem và cập nhật
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '0.5rem', fontSize: '0.8rem' }}>
+              <div style={{ color: '#ef4444', fontWeight: 700 }}>TASK</div>
+              <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={selectedTask.name}>{selectedTask.name}</div>
+              
+              <div style={{ color: '#ef4444', fontWeight: 700 }}>DUE DATE</div>
+              <div>{selectedTask.dueDate}</div>
+              
+              <div style={{ color: '#ef4444', fontWeight: 700, display: 'flex', alignItems: 'center' }}>STATUS</div>
+              <div>
+                <select 
+                  value={updateStatus} 
+                  onChange={(e) => setUpdateStatus(e.target.value)}
+                  style={{ width: '100%', padding: '0.2rem', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '0.75rem' }}
+                >
+                  <option value="🚦 Chưa bắt đầu">🚦 Chưa bắt đầu</option>
+                  <option value="⏳ Chờ xử lý">⏳ Chờ xử lý</option>
+                  <option value="🏃‍♂️ Đang thực hiện">🏃‍♂️ Đang thực hiện</option>
+                  <option value="⏸️ Tạm hoãn">⏸️ Tạm hoãn</option>
+                  <option value="🐢 Bị chậm trễ">🐢 Bị chậm trễ</option>
+                  <option value="✅ Hoàn thành">✅ Hoàn thành</option>
+                  <option value="❌ Đã hủy">❌ Đã hủy</option>
+                </select>
+              </div>
+              
+              <div style={{ color: '#ef4444', fontWeight: 700 }}>PRIORITY</div>
+              <div><span style={{ color: getPriorityColor(selectedTask.priority), fontWeight: 700 }}>{selectedTask.priority}</span></div>
+              
+              <div style={{ color: '#ef4444', fontWeight: 700 }}>OWNER</div>
+              <div>{selectedTask.assignee}</div>
+              
+              <div style={{ gridColumn: '1 / -1', marginTop: '0.5rem' }}>
+                <button 
+                  onClick={handleUpdateStatus}
+                  className="btn btn-primary" 
+                  style={{ width: '100%', padding: '0.4rem', fontSize: '0.8rem', borderRadius: '4px' }}
+                >
+                  Xác nhận Update
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* NOTES */}
@@ -158,7 +203,18 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
                   </thead>
                   <tbody>
                     {columnTasks.map((task, idx) => (
-                      <tr key={task.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                      <tr 
+                        key={task.id} 
+                        onClick={() => handleTaskClick(task)}
+                        style={{ 
+                          borderBottom: '1px solid #e2e8f0', 
+                          cursor: 'pointer',
+                          background: selectedTask?.id === task.id ? '#eff6ff' : 'transparent',
+                          transition: 'background 0.2s'
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = selectedTask?.id === task.id ? '#eff6ff' : '#f8fafc'}
+                        onMouseLeave={e => e.currentTarget.style.background = selectedTask?.id === task.id ? '#eff6ff' : 'transparent'}
+                      >
                         <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid #e2e8f0', color: 'var(--text-muted)' }}>{idx + 1}</td>
                         <td style={{ padding: '0.5rem', borderRight: '1px solid #e2e8f0', color: 'var(--text-main)', fontWeight: 600 }}>{task.name}</td>
                         <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid #e2e8f0', color: 'var(--text-muted)' }}>{task.assignee || '-'}</td>
