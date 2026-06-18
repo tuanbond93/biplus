@@ -47,7 +47,7 @@ export default function TaskTable({ tasks, onDeleteTask, onEditTask }) {
             style={{ 
               width: '100%', padding: '0.6rem 1rem 0.6rem 2.2rem', 
               borderRadius: '8px', border: '1px solid var(--card-border)',
-              background: 'var(--bg-main)', color: 'var(--text-main)', outline: 'none'
+              background: 'var(--bg-color)', color: 'var(--text-main)', outline: 'none'
             }}
           />
         </div>
@@ -56,7 +56,7 @@ export default function TaskTable({ tasks, onDeleteTask, onEditTask }) {
       <div style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
-            <tr style={{ background: 'var(--bg-main)', borderBottom: '2px solid var(--card-border)' }}>
+            <tr style={{ background: 'var(--bg-color)', borderBottom: '2px solid var(--card-border)' }}>
               <th style={{ padding: '1rem 1.5rem', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Task Name</th>
               <th style={{ padding: '1rem 1.5rem', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Project</th>
               <th style={{ padding: '1rem 1.5rem', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 600 }}>Status</th>

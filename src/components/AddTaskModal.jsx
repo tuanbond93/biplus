@@ -41,7 +41,7 @@ const SearchableDropdown = ({ options = [], value, onChange, placeholder }) => {
           style={{ 
             width: '100%', padding: '0.8rem 1rem', paddingRight: '2.5rem',
             borderRadius: '10px', border: '1.5px solid var(--card-border)',
-            background: 'var(--bg-main)', color: 'var(--text-main)',
+            background: 'var(--bg-color)', color: 'var(--text-main)',
             fontFamily: 'inherit', fontSize: '0.95rem'
           }}
         />
@@ -129,7 +129,7 @@ const MultiSelectDropdown = ({ options = [], value = '', onChange, placeholder }
         style={{ 
           width: '100%', minHeight: '44px', padding: '0.4rem 2.5rem 0.4rem 0.4rem',
           borderRadius: '10px', border: '1.5px solid var(--card-border)',
-          background: 'var(--bg-main)', cursor: 'text',
+          background: 'var(--bg-color)', cursor: 'text',
           display: 'flex', flexWrap: 'wrap', gap: '0.4rem', alignItems: 'center'
         }}
       >
@@ -379,7 +379,7 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
           padding: 0.8rem 1rem;
           border-radius: 10px;
           border: 1.5px solid var(--card-border);
-          background: var(--bg-main);
+          background: var(--bg-color);
           color: var(--text-main);
           font-family: inherit;
           font-size: 0.95rem;

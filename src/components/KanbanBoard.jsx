@@ -153,10 +153,10 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto', marginBottom: '1rem', maxHeight: '200px' }}>
             {notes.map(note => (
               <div key={note.id} style={{ background: 'var(--card-bg)', padding: '0.5rem', borderRadius: '4px', fontSize: '0.8rem', borderLeft: '3px solid #facc15', position: 'relative' }}>
-                <p style={{ margin: '0 0 0.25rem 0', color: '#422006' }}>{note.text}</p>
+                <p style={{ margin: '0 0 0.25rem 0', color: 'var(--text-main)' }}>{note.text}</p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '0.65rem', color: '#854d0e', fontWeight: 600 }}>- {note.author}</span>
-                  <button onClick={() => onDeleteNote(note.id)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#b45309', padding: 0 }}><Trash2 size={12} /></button>
+                  <span style={{ fontSize: '0.65rem', color: 'var(--primary)', fontWeight: 600 }}>- {note.author}</span>
+                  <button onClick={() => onDeleteNote(note.id)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 0, color: 'var(--danger)' }} title="Xóa note"><Trash2 size={12} /></button>
                 </div>
               </div>
             ))}
@@ -164,8 +164,8 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <textarea value={newNoteText} onChange={(e) => setNewNoteText(e.target.value)} placeholder="Nhập ghi chú..." style={{ width: '100%', padding: '0.5rem', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '0.8rem', resize: 'vertical', minHeight: '60px' }} />
-            <select value={newNoteAuthor} onChange={(e) => setNewNoteAuthor(e.target.value)} style={{ width: '100%', padding: '0.4rem', border: '1px solid #e2e8f0', borderRadius: '4px', fontSize: '0.8rem' }}>
+            <textarea value={newNoteText} onChange={(e) => setNewNoteText(e.target.value)} placeholder="Nhập ghi chú..." style={{ width: '100%', padding: '0.5rem', border: '1px solid var(--card-border)', background: 'var(--bg-color)', color: 'var(--text-main)', borderRadius: '4px', fontSize: '0.8rem', resize: 'vertical', minHeight: '60px' }} />
+            <select value={newNoteAuthor} onChange={(e) => setNewNoteAuthor(e.target.value)} style={{ width: '100%', padding: '0.4rem', border: '1px solid var(--card-border)', background: 'var(--bg-color)', color: 'var(--text-main)', borderRadius: '4px', fontSize: '0.8rem' }}>
               <option value="">-- Chọn người note --</option>
               {users.map(u => <option key={u} value={u}>{u}</option>)}
             </select>
