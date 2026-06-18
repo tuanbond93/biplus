@@ -9,7 +9,7 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
   const [updateStatus, setUpdateStatus] = useState('');
 
   // Apply filter
-  const filteredTasks = filterOwner ? tasks.filter(t => t.assignee === filterOwner) : tasks;
+  const filteredTasks = filterOwner ? tasks.filter(t => t.assignee && t.assignee.includes(filterOwner)) : tasks;
 
   const uniqueStatuses = ['🚦 Chưa bắt đầu', '⏳ Chờ xử lý', '🏃‍♂️ Đang thực hiện', '✅ Hoàn thành'];
   const allStatuses = [...new Set([...uniqueStatuses, ...filteredTasks.map(t => t.status).filter(Boolean)])];

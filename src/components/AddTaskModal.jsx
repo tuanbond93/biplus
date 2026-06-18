@@ -334,8 +334,8 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--card-border)' }}>
             <button type="button" className="btn btn-ghost" onClick={onClose} disabled={isSubmitting} style={{ padding: '0.6rem 1.5rem' }}>Hủy bỏ</button>
-            <button type="submit" className="btn btn-primary" disabled={isSubmitting} style={{ padding: '0.6rem 2rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              {isSubmitting && <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} />}
+            <button type="submit" className="btn btn-primary" disabled={isSubmitting} style={{ padding: '0.6rem 2rem', display: 'flex', gap: '0.5rem', alignItems: 'center', opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }}>
+              {isSubmitting && <Loader2 size={16} className="animate-spin" />}
               {isSubmitting ? 'Đang lưu...' : (isEditMode ? 'Cập nhật' : 'Lưu Task')}
             </button>
           </div>

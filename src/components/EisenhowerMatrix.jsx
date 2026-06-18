@@ -8,7 +8,7 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
   const [updateStatus, setUpdateStatus] = useState('');
   
   // Apply filter
-  const filteredTasks = filterOwner ? tasks.filter(t => t.assignee === filterOwner) : tasks;
+  const filteredTasks = filterOwner ? tasks.filter(t => t.assignee && t.assignee.includes(filterOwner)) : tasks;
 
   const doFirst = filteredTasks.filter(t => t.priority && (t.priority.toLowerCase().includes('khẩn') || t.priority.toLowerCase().includes('urgent')));
   const schedule = filteredTasks.filter(t => t.priority && (t.priority.toLowerCase().includes('cao') || t.priority.toLowerCase().includes('high')));

@@ -28,6 +28,23 @@
   --radius-xl: 24px;
 }
 
+.dark-theme {
+  --bg-color: #0f172a;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --primary-light: rgba(239, 196, 39, 0.2);
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 * {
   box-sizing: border-box;
   margin: 0;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Papa from 'papaparse';
-import { LayoutDashboard, CheckSquare, Settings as SettingsIcon, LogOut, Columns, Grid, Menu, X, Loader2 } from 'lucide-react';
+import { LayoutDashboard, CheckSquare, Settings as SettingsIcon, LogOut, Columns, Grid, Menu, X, Loader2, Moon, Sun } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import TaskTable from './components/TaskTable';
 import KanbanBoard from './components/KanbanBoard';
@@ -22,6 +22,20 @@ function App() {
   const [editTaskData, setEditTaskData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSavingSettings, setIsSavingSettings] = useState(false);
+  
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark-theme');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.body.classList.remove('dark-theme');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
 
   const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSZ7o3cXQMaWIn_xPdTthvO11g7s4u6So32rDrJXoX-arcwHHb8DemgvPr0q4rmpM85xFlUL0wZ_IUe/pub?output=csv';
   const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbylYsVMYZ9X3m3VGbRgwfueP7WzmZ3mkLWVjTm3pikFrJRul-YOjLZaPCwTOT3LH9Ke4g/exec';
@@ -216,10 +230,9 @@ function App() {
 
   if (loading && tasks.length === 0) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: '1rem', background: 'var(--bg-main)' }}>
-        <Loader2 size={48} color="var(--primary)" style={{ animation: 'spin 1s linear infinite' }} />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: '1rem', background: 'var(--bg-color)' }}>
+        <Loader2 size={48} color="var(--primary)" className="animate-spin" />
         <p style={{ color: 'var(--text-main)', fontWeight: 600, fontFamily: 'var(--font-accent)' }}>Đang tải dữ liệu Live từ Google Sheets...</p>
-        <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
@@ -297,6 +310,13 @@ function App() {
           </div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button 
+              onClick={() => setIsDarkMode(!isDarkMode)} 
+              style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.5rem', borderRadius: '50%' }}
+              title="Toggle Dark Mode"
+            >
+              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
             <button className="btn btn-primary" onClick={() => { setEditTaskData(null); setIsModalOpen(true); }}>+ Add Task</button>
             <div className="glass-panel" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem 1rem', borderRadius: '999px', background: 'var(--card-bg)' }}>
               <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: 'var(--text-main)' }}>
