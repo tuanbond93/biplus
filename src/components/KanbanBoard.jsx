@@ -77,7 +77,7 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
       <div className="kanban-sidebar">
         
         {/* FILTER BY */}
-        <div style={{ background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+        <div style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
           <h4 style={{ textAlign: 'center', margin: '0 0 1rem 0', fontSize: '0.85rem', color: 'var(--text-main)' }}>FILTER BY</h4>
           <div style={{ display: 'grid', gridTemplateColumns: '70px 1fr', gap: '0.5rem', fontSize: '0.8rem' }}>
             <div style={{ color: '#3b82f6', fontWeight: 700, display: 'flex', alignItems: 'center' }}>OWNER</div>
@@ -95,7 +95,7 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
         </div>
 
         {/* TASK UPDATER */}
-        <div style={{ background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+        <div style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
           <h4 style={{ textAlign: 'center', margin: '0 0 1rem 0', fontSize: '0.85rem', color: 'var(--text-main)' }}>TASK UPDATER</h4>
           
           {!selectedTask ? (
@@ -147,12 +147,12 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
         </div>
 
         {/* NOTES */}
-        <div style={{ background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <div style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', flex: 1 }}>
           <h4 style={{ textAlign: 'center', margin: '0 0 1rem 0', fontSize: '0.85rem', color: 'var(--text-main)' }}>NOTES</h4>
           
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto', marginBottom: '1rem', maxHeight: '200px' }}>
             {notes.map(note => (
-              <div key={note.id} style={{ background: '#fef08a', padding: '0.5rem', borderRadius: '4px', fontSize: '0.8rem', borderLeft: '3px solid #facc15', position: 'relative' }}>
+              <div key={note.id} style={{ background: 'var(--card-bg)', padding: '0.5rem', borderRadius: '4px', fontSize: '0.8rem', borderLeft: '3px solid #facc15', position: 'relative' }}>
                 <p style={{ margin: '0 0 0.25rem 0', color: '#422006' }}>{note.text}</p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '0.65rem', color: '#854d0e', fontWeight: 600 }}>- {note.author}</span>
@@ -169,7 +169,7 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
               <option value="">-- Chọn người note --</option>
               {users.map(u => <option key={u} value={u}>{u}</option>)}
             </select>
-            <button onClick={handlePostNote} style={{ background: 'var(--primary)', color: '#fff', border: 'none', padding: '0.5rem', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
+            <button onClick={handlePostNote} style={{ background: 'var(--primary)', color: 'var(--text-main)', border: 'none', padding: '0.5rem', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
               + Post Note
             </button>
           </div>
@@ -190,15 +190,15 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
                 {renderDonutChart(columnTasks.length, tasks.length, color)}
               </div>
               
-              <div style={{ background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', minHeight: '400px' }}>
+              <div style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', minHeight: '400px' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
                   <thead>
-                    <tr style={{ background: '#bfdbfe', borderBottom: '2px solid #3b82f6' }}>
-                      <th style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid #93c5fd', width: '30px', color: '#1e3a8a' }}>#</th>
-                      <th style={{ padding: '0.5rem', textAlign: 'left', borderRight: '1px solid #93c5fd', color: '#1e3a8a' }}>TASK</th>
-                      <th style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid #93c5fd', width: '60px', color: '#1e3a8a' }}>PERSON</th>
-                      <th style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid #93c5fd', width: '70px', color: '#1e3a8a' }}>PRIORITY</th>
-                      <th style={{ padding: '0.5rem', textAlign: 'center', width: '60px', color: '#1e3a8a' }}>DAYS REM.</th>
+                    <tr style={{ background: color + '15', borderBottom: `2px solid ${color}` }}>
+                      <th style={{ padding: '0.5rem', textAlign: 'center', borderRight: `1px solid ${color}40`, width: '30px', color: 'var(--text-main)' }}>#</th>
+                      <th style={{ padding: '0.5rem', textAlign: 'left', borderRight: `1px solid ${color}40`, color: 'var(--text-main)' }}>TASK</th>
+                      <th style={{ padding: '0.5rem', textAlign: 'center', borderRight: `1px solid ${color}40`, width: '60px', color: 'var(--text-main)' }}>PERSON</th>
+                      <th style={{ padding: '0.5rem', textAlign: 'center', borderRight: `1px solid ${color}40`, width: '70px', color: 'var(--text-main)' }}>PRIORITY</th>
+                      <th style={{ padding: '0.5rem', textAlign: 'center', width: '60px', color: 'var(--text-main)' }}>DAYS REM.</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -207,18 +207,20 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
                         key={task.id} 
                         onClick={() => handleTaskClick(task)}
                         style={{ 
-                          borderBottom: '1px solid #e2e8f0', 
+                          borderBottom: '1px solid var(--card-border)', 
                           cursor: 'pointer',
-                          background: selectedTask?.id === task.id ? '#eff6ff' : 'transparent',
+                          background: selectedTask?.id === task.id ? 'var(--primary-light)' : 'var(--card-bg)',
                           transition: 'background 0.2s'
                         }}
-                        onMouseEnter={e => e.currentTarget.style.background = selectedTask?.id === task.id ? '#eff6ff' : '#f8fafc'}
-                        onMouseLeave={e => e.currentTarget.style.background = selectedTask?.id === task.id ? '#eff6ff' : 'transparent'}
+                        onMouseEnter={e => e.currentTarget.style.background = selectedTask?.id === task.id ? 'var(--primary-light)' : 'var(--bg-color)'}
+                        onMouseLeave={e => e.currentTarget.style.background = selectedTask?.id === task.id ? 'var(--primary-light)' : 'var(--card-bg)'}
                       >
-                        <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid #e2e8f0', color: 'var(--text-muted)' }}>{idx + 1}</td>
-                        <td style={{ padding: '0.5rem', borderRight: '1px solid #e2e8f0', color: 'var(--text-main)', fontWeight: 600 }}>{task.name}</td>
-                        <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid #e2e8f0', color: 'var(--text-muted)' }}>{task.assignee || '-'}</td>
-                        <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid #e2e8f0' }}>
+                        <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--card-border)', color: 'var(--text-muted)' }}>{idx + 1}</td>
+                        <td style={{ padding: '0.5rem', borderRight: '1px solid var(--card-border)', color: 'var(--text-main)', fontWeight: 600 }}>{task.name}</td>
+                        <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--card-border)', color: 'var(--text-main)' }}>
+                          {task.assignee ? task.assignee.split(',').map(name => name.trim().charAt(0)).join('') : '-'}
+                        </td>
+                        <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--card-border)', color: 'var(--text-main)' }}>
                           <span style={{ color: getPriorityColor(task.priority), fontWeight: 700, fontSize: '0.75rem' }}>{task.priority || '-'}</span>
                         </td>
                         <td style={{ padding: '0.5rem', textAlign: 'center', color: 'var(--text-muted)' }}>{calculateDaysRem(task.dueDate)}</td>

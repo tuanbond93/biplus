@@ -38,11 +38,11 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
   };
 
   const renderQuadrant = (title, list, color, bgColor) => (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#fff', border: `1px solid ${color}40`, borderRadius: '12px', overflow: 'hidden' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'var(--card-bg)', border: `1px solid ${color}40`, borderRadius: '12px', overflow: 'hidden' }}>
       <div style={{ background: bgColor, padding: '1rem', borderBottom: `1px solid ${color}40` }}>
         <h3 style={{ margin: 0, color: color, fontSize: '1.1rem', display: 'flex', justifyContent: 'space-between' }}>
           {title}
-          <span style={{ background: '#fff', padding: '0.1rem 0.5rem', borderRadius: '99px', fontSize: '0.8rem' }}>{list.length}</span>
+          <span style={{ background: 'var(--bg-color)', padding: '0.1rem 0.5rem', borderRadius: '99px', fontSize: '0.8rem', color: 'var(--text-main)' }}>{list.length}</span>
         </h3>
       </div>
       <div style={{ padding: '1rem', flex: 1, overflowY: 'auto', maxHeight: '400px', display: 'flex', flexDirection: 'column', gap: '0.75rem', background: '#f8fafc' }}>
@@ -54,7 +54,7 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
               key={task.id} 
               onClick={() => handleTaskClick(task)}
               style={{ 
-                background: selectedTask?.id === task.id ? '#eff6ff' : '#fff', 
+                background: selectedTask?.id === task.id ? 'var(--primary-light)' : 'var(--card-bg)', 
                 padding: '1rem', 
                 borderRadius: '8px', 
                 border: selectedTask?.id === task.id ? `2px solid ${color}` : '1px solid var(--card-border)', 
@@ -81,7 +81,7 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
       <div className="kanban-sidebar">
         
         {/* FILTER BY */}
-        <div style={{ background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+        <div style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
           <h4 style={{ textAlign: 'center', margin: '0 0 1rem 0', fontSize: '0.85rem', color: 'var(--text-main)' }}>FILTER BY</h4>
           <div style={{ display: 'grid', gridTemplateColumns: '70px 1fr', gap: '0.5rem', fontSize: '0.8rem' }}>
             <div style={{ color: '#3b82f6', fontWeight: 700, display: 'flex', alignItems: 'center' }}>OWNER</div>
@@ -99,7 +99,7 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
         </div>
 
         {/* TASK UPDATER */}
-        <div style={{ background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+        <div style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
           <h4 style={{ textAlign: 'center', margin: '0 0 1rem 0', fontSize: '0.85rem', color: 'var(--text-main)' }}>TASK UPDATER</h4>
           
           {!selectedTask ? (
@@ -151,7 +151,7 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
         </div>
 
         {/* NOTES */}
-        <div style={{ background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <div style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '8px', padding: '1rem', boxShadow: '0 1px 2px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', flex: 1 }}>
           <h4 style={{ textAlign: 'center', margin: '0 0 1rem 0', fontSize: '0.85rem', color: 'var(--text-main)' }}>NOTES</h4>
           
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto', marginBottom: '1rem', maxHeight: '200px' }}>
@@ -173,7 +173,7 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
               <option value="">-- Chọn người note --</option>
               {users.map(u => <option key={u} value={u}>{u}</option>)}
             </select>
-            <button onClick={handlePostNote} style={{ background: 'var(--primary)', color: '#fff', border: 'none', padding: '0.5rem', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
+            <button onClick={handlePostNote} style={{ background: 'var(--primary)', color: 'var(--text-main)', border: 'none', padding: '0.5rem', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
               + Post Note
             </button>
           </div>
@@ -183,12 +183,12 @@ export default function EisenhowerMatrix({ tasks, notes = [], onAddNote, onDelet
       {/* RIGHT BOARD (Matrix) */}
       <div className="eisenhower-grid">
         <div className="eisenhower-row">
-          {renderQuadrant('🚨 DO FIRST (Khẩn cấp)', doFirst, '#ef4444', '#fef2f2')}
-          {renderQuadrant('🔥 SCHEDULE (Cao)', schedule, '#f97316', '#fff7ed')}
+          {renderQuadrant('🚨 DO FIRST (Khẩn cấp)', doFirst, '#ef4444', '#ef444415')}
+          {renderQuadrant('🔥 SCHEDULE (Cao)', schedule, '#f97316', '#f9731615')}
         </div>
         <div className="eisenhower-row">
-          {renderQuadrant('⚡ DELEGATE (TB)', delegate, '#3b82f6', '#eff6ff')}
-          {renderQuadrant('🧊 DONT DO (Thấp)', dontDo, '#94a3b8', '#f8fafc')}
+          {renderQuadrant('⚡ DELEGATE (TB)', delegate, '#3b82f6', '#3b82f615')}
+          {renderQuadrant('🧊 DONT DO (Thấp)', dontDo, '#94a3b8', '#94a3b815')}
         </div>
       </div>
       

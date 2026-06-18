@@ -56,7 +56,7 @@ const SearchableDropdown = ({ options = [], value, onChange, placeholder }) => {
       {isOpen && (
         <div style={{
           position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px',
-          background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px',
+          background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '8px',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 10,
           maxHeight: '200px', overflowY: 'auto'
         }}>
@@ -70,10 +70,10 @@ const SearchableDropdown = ({ options = [], value, onChange, placeholder }) => {
               }}
               style={{
                 padding: '0.75rem 1rem', cursor: 'pointer', fontSize: '0.9rem',
-                borderBottom: idx < filteredOptions.length - 1 ? '1px solid #f1f5f9' : 'none',
+                borderBottom: idx < filteredOptions.length - 1 ? '1px solid var(--card-border)' : 'none',
                 color: 'var(--text-main)'
               }}
-              onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-color)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
               {opt}
@@ -164,7 +164,7 @@ const MultiSelectDropdown = ({ options = [], value = '', onChange, placeholder }
       {isOpen && (
         <div style={{
           position: 'absolute', top: '100%', left: 0, right: 0, marginTop: '4px',
-          background: '#fff', border: '1px solid var(--card-border)', borderRadius: '8px',
+          background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '8px',
           boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', zIndex: 10,
           maxHeight: '200px', overflowY: 'auto'
         }}>

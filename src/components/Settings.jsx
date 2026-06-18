@@ -51,7 +51,7 @@ export default function Settings({ settings, onSaveSettings, isSaving }) {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
         
         {/* Users Management */}
-        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: '#fff' }}>
+        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: 'var(--card-bg)' }}>
           <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>👤 Quản lý Nhân sự (Owner)</h3>
           
           <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -78,7 +78,7 @@ export default function Settings({ settings, onSaveSettings, isSaving }) {
         </div>
 
         {/* Projects Management */}
-        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: '#fff' }}>
+        <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: 'var(--card-bg)' }}>
           <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>📁 Quản lý Dự án (Project)</h3>
           
           <div style={{ display: 'flex', gap: '0.5rem' }}>

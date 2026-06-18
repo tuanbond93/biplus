@@ -109,7 +109,7 @@ p {
 .sidebar {
   width: 280px;
   padding: 2rem;
-  background: #ffffff;
+  background: var(--card-bg);
   border-right: 1px solid var(--card-border);
   display: flex;
   flex-direction: column;
