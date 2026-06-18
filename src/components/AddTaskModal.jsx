@@ -20,6 +20,16 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    if (!settings?.projects?.includes(formData.category)) {
+      alert("⚠️ Dự án không hợp lệ! Vui lòng chỉ chọn (hoặc gõ đúng) Dự án có sẵn trong danh sách Setting.");
+      return;
+    }
+    if (formData.assignee && !settings?.users?.includes(formData.assignee)) {
+      alert("⚠️ Người phụ trách không hợp lệ! Vui lòng chỉ chọn (hoặc gõ đúng) tên có sẵn trong danh sách Setting.");
+      return;
+    }
+
     onSubmit(formData);
   };
 
