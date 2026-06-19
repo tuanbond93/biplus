@@ -60,11 +60,15 @@ function App() {
             return normalizedRow;
           });
 
-          const validRows = normalizedData.filter(row => row['Task / Backlog Item'] && row['Task / Backlog Item'].trim() !== '');
+          const validRows = normalizedData.filter(row => {
+            const tName = row['Task / Backlog Item'] || row['Objective/KR'] || row['Task Name'] || row['Name'];
+            return tName && tName.trim() !== '';
+          });
+
           const fetchedTasks = validRows.map((row, index) => {
-            const estimate = parseFloat(row['Estimate Point']) || 0;
+            const estimate = parseFloat(row['Estimate Point']) || parseFloat(row['Points']) || 0;
             const done = parseFloat(row['Done Point']) || 0;
-            let progress = parseFloat(row['% Done']) || (estimate > 0 ? Math.round((done / estimate) * 100) : 0);
+            let progress = parseFloat(row['% Done']) || parseFloat(row['Progress']) || (estimate > 0 ? Math.round((done / estimate) * 100) : 0);
             
             const status = row['Status'] || '🚦 Chưa bắt đầu';
             if (status.toLowerCase().includes('hoàn thành') || status.toLowerCase().includes('done')) {
@@ -72,17 +76,17 @@ function App() {
             }
 
             return {
-              id: row['Task ID'] || `T-${index + 1}`,
-              goal: row['Objective / KR'] || '',
-              name: row['Task / Backlog Item'] || 'Untitled',
-              category: row['Project'] || 'No Project',
-              assignee: row['Owner'] || 'Unassigned',
+              id: row['Task ID'] || row['ID'] || `T-${index + 1}`,
+              goal: row['Goal'] || row['Objective / KR'] || '',
+              name: row['Task / Backlog Item'] || row['Objective/KR'] || row['Task Name'] || row['Name'] || 'Untitled',
+              category: row['Project'] || row['Category'] || 'No Project',
+              assignee: row['Owner'] || row['Assignee'] || 'Unassigned',
               participants: row['Participants'] || '', // Optional fallback
               priority: row['Priority'] || '🧊 Thấp',
               status: row['Status'] || '🚦 Chưa bắt đầu',
               dueDate: row['Due Date'] || '-',
-              points: estimate || parseFloat(row['Points']) || 0,
-              week: row['Sprint'] || row['Week'] || '',
+              points: estimate,
+              week: row['Sprint'] || row['Week'] || row['Week (1 or 2)'] || '',
               createdDate: row['Created Date'] || '',
               updatedDate: row['Updated Date'] || '',
               progress: progress > 100 ? 100 : progress
