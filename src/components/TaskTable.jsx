@@ -75,7 +75,10 @@ export default function TaskTable({ tasks, onDeleteTask, onEditTask }) {
                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
               >
                 <td style={{ padding: '1rem 1.5rem' }}>
-                  <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>{task.name}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--primary)', fontWeight: 700, marginBottom: '0.25rem' }}>
+                    {task.goal ? `${task.goal} ➔ ` : ''}{task.category && task.category !== 'No Project' ? task.category : ''}
+                  </div>
+                  <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '1rem' }}>{task.name}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Owner: {task.assignee || 'Unassigned'}</div>
                 </td>
                 <td style={{ padding: '1rem 1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{task.category || '-'}</td>

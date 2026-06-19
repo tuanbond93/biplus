@@ -216,7 +216,12 @@ export default function KanbanBoard({ tasks, notes = [], onAddNote, onDeleteNote
                         onMouseLeave={e => e.currentTarget.style.background = selectedTask?.id === task.id ? color + '15' : 'var(--card-bg)'}
                       >
                         <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--card-border)', color: 'var(--text-muted)' }}>{idx + 1}</td>
-                        <td style={{ padding: '0.5rem', borderRight: '1px solid var(--card-border)', color: 'var(--text-main)', fontWeight: 600 }}>{task.name}</td>
+                        <td style={{ padding: '0.5rem', borderRight: '1px solid var(--card-border)' }}>
+                          <div style={{ fontSize: '0.65rem', color: 'var(--primary)', fontWeight: 700, marginBottom: '0.15rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '150px' }} title={task.goal ? `${task.goal} ➔ ${task.category}` : task.category}>
+                            {task.goal ? `${task.goal} ➔ ` : ''}{task.category && task.category !== 'No Project' ? task.category : ''}
+                          </div>
+                          <div style={{ color: 'var(--text-main)', fontWeight: 600 }}>{task.name}</div>
+                        </td>
                         <td style={{ padding: '0.5rem', textAlign: 'center', borderRight: '1px solid var(--card-border)', color: 'var(--text-main)' }}>
                           {task.assignee ? task.assignee.split(',').map(name => name.trim().charAt(0)).join('') : '-'}
                         </td>
