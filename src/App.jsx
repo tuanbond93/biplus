@@ -50,11 +50,11 @@ function App() {
         header: true,
         skipEmptyLines: true,
         complete: (results) => {
-          const validRows = results.data.filter(row => row['Objective/KR'] && row['Objective/KR'].trim() !== '');
+          const validRows = results.data.filter(row => row['Task / Backlog Item'] && row['Task / Backlog Item'].trim() !== '');
           const fetchedTasks = validRows.map((row, index) => {
             const estimate = parseFloat(row['Estimate Point']) || 0;
             const done = parseFloat(row['Done Point']) || 0;
-            let progress = estimate > 0 ? Math.round((done / estimate) * 100) : 0;
+            let progress = parseFloat(row['% Done']) || (estimate > 0 ? Math.round((done / estimate) * 100) : 0);
             
             const status = row['Status'] || '🚦 Chưa bắt đầu';
             if (status.toLowerCase().includes('hoàn thành') || status.toLowerCase().includes('done')) {
@@ -62,17 +62,17 @@ function App() {
             }
 
             return {
-              id: `T-${index + 1}`,
-              goal: row['Goal'] || '',
-              name: row['Objective/KR'] || 'Untitled',
+              id: row['Task ID'] || `T-${index + 1}`,
+              goal: row['Objective / KR'] || '',
+              name: row['Task / Backlog Item'] || 'Untitled',
               category: row['Project'] || 'No Project',
               assignee: row['Owner'] || 'Unassigned',
-              participants: row['Participants'] || '',
+              participants: row['Participants'] || '', // Optional fallback
               priority: row['Priority'] || '🧊 Thấp',
               status: row['Status'] || '🚦 Chưa bắt đầu',
               dueDate: row['Due Date'] || '-',
-              points: parseFloat(row['Points']) || estimate || 0,
-              week: row['Week'] || row['Week (1 or 2)'] || '',
+              points: estimate || parseFloat(row['Points']) || 0,
+              week: row['Sprint'] || row['Week'] || '',
               createdDate: row['Created Date'] || '',
               updatedDate: row['Updated Date'] || '',
               progress: progress > 100 ? 100 : progress
