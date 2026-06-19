@@ -288,7 +288,7 @@ function App() {
             <Grid size={20} /> Eisenhower Matrix
           </button>
           <button className={`btn ${activeTab === 'tasks' ? 'btn-primary' : 'btn-ghost'}`} style={{ justifyContent: 'flex-start', padding: '1rem' }} onClick={() => handleTabClick('tasks')}>
-            <CheckSquare size={20} /> Task List
+            <CheckSquare size={20} /> Backlog
           </button>
         </nav>
 
