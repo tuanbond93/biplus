@@ -289,15 +289,16 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <div className="form-group full-width">
-            <label>Mục tiêu (Goal) <span style={{ color: 'var(--danger)' }}>*</span></label>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          
+          <div className="form-group">
+            <label style={{ whiteSpace: 'nowrap' }}>Mục tiêu (Goal) <span style={{ color: 'var(--danger)' }}>*</span></label>
             <input required type="text" name="goal" value={formData.goal} onChange={handleChange} placeholder="Ví dụ: 30 SQL từ chiến dịch bán hàng" />
           </div>
 
           <div className="form-row">
-            <div className="form-group" style={{ flex: 1 }}>
-              <label>Dự án <span style={{ color: '#ef4444' }}>*</span></label>
+            <div className="form-group" style={{ flex: '1 1 35%' }}>
+              <label style={{ whiteSpace: 'nowrap' }}>Dự án (Project) <span style={{ color: '#ef4444' }}>*</span></label>
               <SearchableDropdown 
                 options={settings?.projects || []}
                 value={formData.category}
@@ -305,15 +306,15 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
                 placeholder="Tìm hoặc chọn dự án..."
               />
             </div>
-            <div className="form-group" style={{ flex: 2 }}>
-              <label>Tên công việc (Objective/KR) <span style={{ color: 'var(--danger)' }}>*</span></label>
+            <div className="form-group" style={{ flex: '1 1 65%' }}>
+              <label style={{ whiteSpace: 'nowrap' }}>Tên công việc (Objective/KR) <span style={{ color: 'var(--danger)' }}>*</span></label>
               <input required type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Ví dụ: Thiết kế giao diện Dashboard" />
             </div>
           </div>
 
           <div className="form-row">
-            <div className="form-group">
-              <label>Người phụ trách (Owner)</label>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label style={{ whiteSpace: 'nowrap' }}>Người phụ trách (Owner)</label>
               <SearchableDropdown 
                 options={settings?.users || []}
                 value={formData.assignee}
@@ -321,8 +322,8 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
                 placeholder="Tìm người phụ trách..."
               />
             </div>
-            <div className="form-group">
-              <label>Người tham gia (Participants)</label>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label style={{ whiteSpace: 'nowrap' }}>Người tham gia (Participants)</label>
               <MultiSelectDropdown 
                 options={settings?.users || []}
                 value={formData.participants}
@@ -333,8 +334,8 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
           </div>
 
           <div className="form-row">
-            <div className="form-group">
-              <label>Độ ưu tiên (Priority)</label>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label style={{ whiteSpace: 'nowrap' }}>Độ ưu tiên (Priority)</label>
               <div className="select-wrapper">
                 <select name="priority" value={formData.priority} onChange={handleChange}>
                   <option value="🚨 Khẩn cấp">🚨 Khẩn cấp</option>
@@ -344,8 +345,8 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
                 </select>
               </div>
             </div>
-            <div className="form-group">
-              <label>Trạng thái (Status)</label>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label style={{ whiteSpace: 'nowrap' }}>Trạng thái (Status)</label>
               <div className="select-wrapper">
                 <select name="status" value={formData.status} onChange={handleChange}>
                   <option value="🚦 Chưa bắt đầu">🚦 Chưa bắt đầu</option>
@@ -358,28 +359,20 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
                 </select>
               </div>
             </div>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label style={{ whiteSpace: 'nowrap' }}>Week / Sprint</label>
+              <input type="text" name="week" value={formData.week} onChange={handleChange} placeholder="VD: Sprint 1" />
+            </div>
           </div>
 
           <div className="form-row">
-            <div className="form-group">
-              <label>Ngày đến hạn (Due Date)</label>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label style={{ whiteSpace: 'nowrap' }}>Ngày đến hạn (Due Date)</label>
               <input type="date" name="dueDate" value={formData.dueDate} onChange={handleChange} />
             </div>
-            <div className="form-group">
-              <label>Points</label>
+            <div className="form-group" style={{ flex: 1 }}>
+              <label style={{ whiteSpace: 'nowrap' }}>Estimate Point</label>
               <input type="number" name="points" value={formData.points} onChange={handleChange} placeholder="Ví dụ: 5" min="0" step="0.5" />
-            </div>
-            <div className="form-group">
-              <label>Week</label>
-              <div className="select-wrapper">
-                <select name="week" value={formData.week} onChange={handleChange}>
-                  <option value="">-- Chọn tuần --</option>
-                  <option value="1">Tuần 1</option>
-                  <option value="2">Tuần 2</option>
-                  <option value="3">Tuần 3</option>
-                  <option value="4">Tuần 4</option>
-                </select>
-              </div>
             </div>
           </div>
 
@@ -405,13 +398,15 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
         }
         .modal-content {
           background: var(--card-bg);
-          width: 90%; max-width: 600px;
+          width: 95%; max-width: 850px;
           border-radius: 16px;
-          padding: 2rem;
+          padding: 2.5rem;
           box-shadow: 0 20px 40px rgba(0,0,0,0.1);
           border: 1px solid var(--card-border);
           transform: translateY(0);
           animation: slideUp 0.3s ease-out;
+          max-height: 90vh;
+          overflow-y: auto;
         }
         .form-row {
           display: flex; gap: 1.25rem;

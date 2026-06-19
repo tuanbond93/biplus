@@ -90,14 +90,20 @@ export default function Dashboard({ tasks }) {
   const ownerStatsMap = {};
   let totalAssignedTasks = 0;
   tasks.forEach(task => {
-    if (!task.assignee) {
+    const people = [];
+    if (task.assignee) people.push(...task.assignee.split(',').map(a => a.trim()));
+    if (task.participants) people.push(...task.participants.split(',').map(a => a.trim()));
+    
+    const uniquePeople = [...new Set(people)].filter(Boolean);
+    
+    if (uniquePeople.length === 0) {
       ownerStatsMap['Unassigned'] = (ownerStatsMap['Unassigned'] || 0) + 1;
       totalAssignedTasks++;
       return;
     }
-    const assignees = task.assignee.split(',').map(a => a.trim()).filter(Boolean);
-    assignees.forEach(assignee => {
-      ownerStatsMap[assignee] = (ownerStatsMap[assignee] || 0) + 1;
+    
+    uniquePeople.forEach(person => {
+      ownerStatsMap[person] = (ownerStatsMap[person] || 0) + 1;
       totalAssignedTasks++;
     });
   });
