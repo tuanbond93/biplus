@@ -50,7 +50,17 @@ function App() {
         header: true,
         skipEmptyLines: true,
         complete: (results) => {
-          const validRows = results.data.filter(row => row['Task / Backlog Item'] && row['Task / Backlog Item'].trim() !== '');
+          // Chuẩn hóa tên cột (loại bỏ xuống dòng \n và khoảng trắng thừa) để tránh lỗi không tìm thấy cột
+          const normalizedData = results.data.map(row => {
+            const normalizedRow = {};
+            for (let key in row) {
+              const cleanKey = key.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
+              normalizedRow[cleanKey] = row[key];
+            }
+            return normalizedRow;
+          });
+
+          const validRows = normalizedData.filter(row => row['Task / Backlog Item'] && row['Task / Backlog Item'].trim() !== '');
           const fetchedTasks = validRows.map((row, index) => {
             const estimate = parseFloat(row['Estimate Point']) || 0;
             const done = parseFloat(row['Done Point']) || 0;
