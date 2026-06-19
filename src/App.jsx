@@ -158,7 +158,7 @@ function App() {
           progress: 0
         };
         setTasks(prev => [...prev, newTask]);
-        await sendPostRequest({ action: 'addTask', ...formData });
+        await sendPostRequest({ action: 'addTask', ...newTask });
       }
       setTimeout(() => {
         setIsModalOpen(false);
