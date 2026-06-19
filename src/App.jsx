@@ -63,12 +63,18 @@ function App() {
 
             return {
               id: `T-${index + 1}`,
+              goal: row['Goal'] || '',
               name: row['Objective/KR'] || 'Untitled',
               category: row['Project'] || 'No Project',
               assignee: row['Owner'] || 'Unassigned',
+              participants: row['Participants'] || '',
               priority: row['Priority'] || '🧊 Thấp',
               status: row['Status'] || '🚦 Chưa bắt đầu',
               dueDate: row['Due Date'] || '-',
+              points: parseFloat(row['Points']) || estimate || 0,
+              week: row['Week'] || row['Week (1 or 2)'] || '',
+              createdDate: row['Created Date'] || '',
+              updatedDate: row['Updated Date'] || '',
               progress: progress > 100 ? 100 : progress
             };
           });
@@ -130,18 +136,25 @@ function App() {
     try {
       if (oldTaskName) {
         // Edit mode Optimistic Update
-        setTasks(prev => prev.map(t => t.name === oldTaskName ? { ...t, ...formData } : t));
-        await sendPostRequest({ action: 'editTask', oldTaskName, ...formData });
+        const updatedData = { ...formData, updatedDate: new Date().toISOString() };
+        setTasks(prev => prev.map(t => t.name === oldTaskName ? { ...t, ...updatedData } : t));
+        await sendPostRequest({ action: 'editTask', oldTaskName, ...updatedData });
       } else {
         // Add mode Optimistic Update
         const newTask = {
           id: `T-Mới-${Date.now().toString().slice(-4)}`,
+          goal: formData.goal || '',
           name: formData.name || 'Untitled',
           category: formData.category || 'No Project',
           assignee: formData.assignee || 'Unassigned',
+          participants: formData.participants || '',
           priority: formData.priority || '🧊 Thấp',
           status: formData.status || '🚦 Chưa bắt đầu',
           dueDate: formData.dueDate || '-',
+          points: formData.points || 0,
+          week: formData.week || '',
+          createdDate: new Date().toISOString(),
+          updatedDate: new Date().toISOString(),
           progress: 0
         };
         setTasks(prev => [...prev, newTask]);

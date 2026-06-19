@@ -200,12 +200,16 @@ const MultiSelectDropdown = ({ options = [], value = '', onChange, placeholder }
 
 export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, settings, initialData }) {
   const [formData, setFormData] = useState({
+    goal: '',
     name: '',
     category: '',
     assignee: '',
+    participants: '',
     priority: '🧊 Thấp',
     status: '🚦 Chưa bắt đầu',
-    dueDate: ''
+    dueDate: '',
+    points: '',
+    week: ''
   });
 
   useEffect(() => {
@@ -214,12 +218,16 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
         setFormData(initialData);
       } else {
         setFormData({
+          goal: '',
           name: '',
           category: '',
           assignee: '',
+          participants: '',
           priority: '🧊 Thấp',
           status: '🚦 Chưa bắt đầu',
-          dueDate: ''
+          dueDate: '',
+          points: '',
+          week: ''
         });
       }
     }
@@ -250,6 +258,15 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
       }
     }
 
+    if (formData.participants) {
+      const participantsList = formData.participants.split(',').map(s => s.trim()).filter(Boolean);
+      const invalidPart = participantsList.find(a => !settings?.users?.includes(a));
+      if (invalidPart) {
+        alert(`⚠️ Người tham gia "${invalidPart}" không hợp lệ! Vui lòng chọn trong danh sách Setting.`);
+        return;
+      }
+    }
+
     onSubmit(formData, initialData ? initialData.name : null);
   };
 
@@ -274,12 +291,12 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div className="form-group full-width">
-            <label>Tên công việc (Objective/KR) <span style={{ color: 'var(--danger)' }}>*</span></label>
-            <input required type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Ví dụ: Thiết kế giao diện Dashboard" />
+            <label>Mục tiêu (Goal) <span style={{ color: 'var(--danger)' }}>*</span></label>
+            <input required type="text" name="goal" value={formData.goal} onChange={handleChange} placeholder="Ví dụ: 30 SQL từ chiến dịch bán hàng" />
           </div>
 
           <div className="form-row">
-            <div className="form-group">
+            <div className="form-group" style={{ flex: 1 }}>
               <label>Dự án <span style={{ color: '#ef4444' }}>*</span></label>
               <SearchableDropdown 
                 options={settings?.projects || []}
@@ -288,13 +305,29 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
                 placeholder="Tìm hoặc chọn dự án..."
               />
             </div>
+            <div className="form-group" style={{ flex: 2 }}>
+              <label>Tên công việc (Objective/KR) <span style={{ color: 'var(--danger)' }}>*</span></label>
+              <input required type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Ví dụ: Thiết kế giao diện Dashboard" />
+            </div>
+          </div>
+
+          <div className="form-row">
             <div className="form-group">
-              <label>Người phụ trách (Có thể chọn nhiều)</label>
-              <MultiSelectDropdown 
+              <label>Người phụ trách (Owner)</label>
+              <SearchableDropdown 
                 options={settings?.users || []}
                 value={formData.assignee}
                 onChange={(val) => setFormData({ ...formData, assignee: val })}
                 placeholder="Tìm người phụ trách..."
+              />
+            </div>
+            <div className="form-group">
+              <label>Người tham gia (Participants)</label>
+              <MultiSelectDropdown 
+                options={settings?.users || []}
+                value={formData.participants}
+                onChange={(val) => setFormData({ ...formData, participants: val })}
+                placeholder="Tìm người tham gia..."
               />
             </div>
           </div>
@@ -327,9 +360,27 @@ export default function AddTaskModal({ isOpen, onClose, onSubmit, isSubmitting, 
             </div>
           </div>
 
-          <div className="form-group" style={{ width: '50%' }}>
-            <label>Ngày đến hạn (Due Date)</label>
-            <input type="date" name="dueDate" value={formData.dueDate} onChange={handleChange} />
+          <div className="form-row">
+            <div className="form-group">
+              <label>Ngày đến hạn (Due Date)</label>
+              <input type="date" name="dueDate" value={formData.dueDate} onChange={handleChange} />
+            </div>
+            <div className="form-group">
+              <label>Points</label>
+              <input type="number" name="points" value={formData.points} onChange={handleChange} placeholder="Ví dụ: 5" min="0" step="0.5" />
+            </div>
+            <div className="form-group">
+              <label>Week</label>
+              <div className="select-wrapper">
+                <select name="week" value={formData.week} onChange={handleChange}>
+                  <option value="">-- Chọn tuần --</option>
+                  <option value="1">Tuần 1</option>
+                  <option value="2">Tuần 2</option>
+                  <option value="3">Tuần 3</option>
+                  <option value="4">Tuần 4</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--card-border)' }}>

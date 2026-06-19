@@ -227,6 +227,67 @@ tbody tr:hover {
   transition: width 0.5s ease-out;
 }
 
+/* Dashboard Custom Classes */
+.summary-pill {
+  flex: 1;
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+.summary-pill:hover {
+  transform: translateY(-2px);
+}
+.pill-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pill-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+  opacity: 0.9;
+}
+.pill-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.activity-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+}
+.ac-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+.ac-title {
+  color: var(--text-main);
+  font-size: 0.95rem;
+}
+.ac-subtitle {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
 /* Responsive Design */
 .kanban-layout {
   display: flex;
