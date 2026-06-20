@@ -61,7 +61,7 @@ function App() {
           });
 
           const validRows = normalizedData.filter(row => {
-            const tName = row['Task / Backlog Item'] || row['Objective/KR'] || row['Task Name'] || row['Name'];
+            const tName = row['Task'] || row['Task / Backlog Item'] || row['Objective/KR'] || row['Task Name'] || row['Name'];
             return tName && tName.trim() !== '';
           });
 
@@ -78,7 +78,7 @@ function App() {
             return {
               id: row['Task ID'] || row['ID'] || `T-${index + 1}`,
               goal: row['Goal'] || row['Objective / KR'] || '',
-              name: row['Task / Backlog Item'] || row['Objective/KR'] || row['Task Name'] || row['Name'] || 'Untitled',
+              name: row['Task'] || row['Task / Backlog Item'] || row['Objective/KR'] || row['Task Name'] || row['Name'] || 'Untitled',
               category: row['Project'] || row['Category'] || 'No Project',
               assignee: row['Owner'] || row['Assignee'] || 'Unassigned',
               participants: row['Participants'] || '', // Optional fallback
